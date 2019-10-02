@@ -21,6 +21,9 @@
     <ClInclude Include="loop.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="vao.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
