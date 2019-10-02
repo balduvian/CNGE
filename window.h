@@ -151,6 +151,11 @@ namespace CNGE7
 			return glfwWindowShouldClose(window);
 		}
 
+		int get_refresh_rate()
+		{
+			return video_mode->refreshRate;
+		}
+
 	private:
 
 		GLFWwindow* window;

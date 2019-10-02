@@ -14,7 +14,7 @@ int main()
 	CNGE7::Window::wrangle();
 
 	// begin the game
-	CNGE7::Loop(60, std::bind(&CNGE7::Window::get_should_close, window), [&](auto fps, auto delta, auto time)
+	CNGE7::Loop(window.get_refresh_rate(), std::bind(&CNGE7::Window::get_should_close, window), [&](auto fps, auto delta, auto time)
 	{ 
 		window.poll();
 
