@@ -12,15 +12,34 @@ namespace CNGE7
 	{
 	public:
 		int per_vertex;
+		int size;
 		std::unique_ptr<float[]> data;
+
+		int location;
+
 		GLuint buffer;
 
-		Attribute(int _per_vertex, float* _data)
+		Attribute(int _per_vertex, int length, float _data[])
 		{
 			per_vertex = _per_vertex;
+			size = length * sizeof(float);
 			data = std::unique_ptr<float[]>(_data);
 
+			location = 0; // will be set by VAO
+
 			glGenBuffers(1, &buffer);
+		}
+
+		/// the vertices in a vao are an attribute
+		/// use this function to shortcut the creation
+		static Attribute create_vertex_attribute(int _length, float _data[])
+		{
+			return Attribute(3, _length, _data);
+		}
+
+		~Attribute()
+		{
+			glDeleteBuffers(1, &buffer);
 		}
 	};
 
@@ -28,26 +47,77 @@ namespace CNGE7
 	{
 	public:
 
-		VAO()
+		VAO(
+			int _draw_mode,
+			Attribute* _vertex_attrib,
+			int _index_count, int _indices[],
+			int _attrib_count, Attribute _attribs[]
+		)
 		{
+			// initialize variables
+			draw_mode = _draw_mode;
+			vertex_attrib = std::unique_ptr<Attribute>(_vertex_attrib);
+			attribs = std::unique_ptr<Attribute[]>(_attribs);
+
+			// create this vao
 			glCreateVertexArrays(1, &vao);
 
-			auto at = Attribute(3, new float[2]{0.0f,1.0f});
+			// the first attribute is of course vertices
+			add_attribute(*vertex_attrib, 0);
+
+			// add the rest of the custom attributes
+			for (auto i = 0; i < _attrib_count; ++i)
+				add_attribute(attribs[i], i + 1);
+
+			// add index buffer
+			glGenBuffers(1, &ibo);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index_count, _indices, GL_STATIC_DRAW);
 		}
 
-		void add_attribute(Attribute attribute)
+		~VAO()
 		{
+			// attributes get deleted automatically
 
+			// delete index buffer
+			glDeleteBuffers(1, &ibo);
+
+			// delete the whole thing
+			glDeleteVertexArrays(1, &vao);
 		}
-	private:
-		GLuint vao;
-		GLuint ibo;
 
-		int vertex_count;
+	private:
+
+		GLuint vao;
+
 		int attrib_count;
 
-		std::unique_ptr<Attribute> attribs;
+		/* attributes */
+		std::unique_ptr<Attribute> vertex_attrib;
+		std::unique_ptr<Attribute[]> attribs;
+
+		GLuint ibo;
 
 		int draw_mode;
+
+		/// internally adds a vertex attribute to this vao
+		/// creates and returns the opengl buffer
+		void add_attribute(Attribute &_attrib, int _location)
+		{
+			// make the attribute buffer current
+			glBindBuffer(GL_ARRAY_BUFFER, _attrib.buffer);
+
+			// draw the float array from the attribute into the buffer
+			glBufferData(GL_ARRAY_BUFFER, _attrib.size, _attrib.data.get(), GL_STATIC_DRAW);
+
+			// tell opengl where and how to use the data
+			glVertexAttribPointer(_location, _attrib.per_vertex, GL_FLOAT, false, 0, nullptr);
+
+			// activate the attribute
+			glEnableVertexAttribArray(_location);
+
+			// set the internal location of the attrib
+			_attrib.location = _location;
+		}
 	};
 }

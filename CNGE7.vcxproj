@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="loop.h" />
+    <ClInclude Include="shader.h" />
     <ClInclude Include="vao.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
