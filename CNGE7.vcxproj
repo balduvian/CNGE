@@ -87,8 +87,9 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\include;C:\Users\Emmet\Programming\libraries\glfw-3.3\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\include;C:\Users\Emmet\Programming\libraries\glfw-3.3\include;C:\Users\Emmet\Programming\libraries\glm-0.9.9.6</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,8 +128,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="loop.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="transform.h" />
     <ClInclude Include="vao.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
