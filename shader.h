@@ -16,12 +16,22 @@ namespace CNGE7
 		const char* PROJVIEW_NAME = "proj_view";
 
 		/// constructs the shader
-		Shader(const char* _vertex_path, const char* _fragment_path, const char** _uniforms)
+		Shader(const char* _vertex_path, const char* _fragment_path) :
+			program(glCreateProgram())
 		{
-			auto program = glCreateProgram();
+			GLint vertex_shader;
+			GLint fragment_shader;
 
-			auto vertex_shader = load_shader(_vertex_path, GL_VERTEX_SHADER);
-			auto fragment_shader = load_shader(_fragment_path, GL_FRAGMENT_SHADER);
+			try
+			{
+				vertex_shader = load_shader(_vertex_path, GL_VERTEX_SHADER);
+				fragment_shader = load_shader(_fragment_path, GL_FRAGMENT_SHADER);
+			}
+			catch (const char* err)
+			{
+				std::cout << err << std::endl;
+				exit(-1);
+			}
 
 			glAttachShader(program, vertex_shader);
 			glAttachShader(program, fragment_shader);
@@ -34,12 +44,12 @@ namespace CNGE7
 			glDeleteShader(vertex_shader);
 			glDeleteShader(fragment_shader);
 
-			model_location = getUniform(MODEL_NAME);
-			model_location = getUniform(PROJVIEW_NAME);
+			model_location = get_uniform(MODEL_NAME);
+			projview_location = get_uniform(PROJVIEW_NAME);
 		}
 
 		/// getter
-		int getUniform(const char* _name)
+		int get_uniform(const char* _name)
 		{
 			return glGetUniformLocation(program, _name);
 		}
@@ -80,7 +90,7 @@ namespace CNGE7
 
 		void give_matrix4(int _location, float* _values)
 		{
-			glUniformMatrix4fv(_location, 16, false, _values);
+			glUniformMatrix4fv(_location, 1, false, _values);
 		}
 
 	private:
@@ -99,7 +109,8 @@ namespace CNGE7
 			if (std::filesystem::exists(file_path))
 			{
 				// get the size of the file in bytes
-				auto size = (GLint)std::filesystem::file_size(file_path);
+				// add a byte at the end for the null character
+				auto size = (GLint)std::filesystem::file_size(file_path) + 1;
 
 				// create the buffer
 				// which will be a single line of text essentially
@@ -108,13 +119,19 @@ namespace CNGE7
 				// get a pointer to the buffer
 				auto buf_ptr = buffer.get();
 
+				// a pointer to buffer that can iterate
+				auto buf_itr = buf_ptr - 1;
+
 				auto file = std::ifstream{};
 
 				file.open(file_path);
 
 				// read the whole file into buffer
 				while (file.good())
-					*buf_ptr++ = file.get();
+					*++buf_itr = file.get();
+				
+				// add null character
+				*buf_itr = 0;
 
 				// close file reading
 				file.close();
@@ -123,7 +140,7 @@ namespace CNGE7
 				auto shader = glCreateShader(_type);
 
 				// put the shader into opengl
-				glShaderSource(shader, size, &buf_ptr, &size);
+				glShaderSource(shader, 1, &buf_ptr, nullptr);
 				glCompileShader(shader);
 				
 				// see if the shader is properly compiled
@@ -133,7 +150,7 @@ namespace CNGE7
 				if (status != GL_TRUE)
 				{
 					// create a buffer for the info log
-					constexpr auto err_size = 128;
+					constexpr auto err_size = 256;
 					char err_buffer[err_size];
 
 					int len_return;

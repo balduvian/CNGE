@@ -32,9 +32,9 @@ namespace CNGE7
 
 		/// the vertices in a vao are an attribute
 		/// use this function to shortcut the creation
-		static Attribute create_vertex_attribute(int _length, float _data[])
+		static Attribute* create_vertex_attribute(int _length, float _data[])
 		{
-			return Attribute(3, _length, _data);
+			return new Attribute(3, _length, _data);
 		}
 
 		~Attribute()
@@ -52,15 +52,15 @@ namespace CNGE7
 			Attribute* _vertex_attrib,
 			int _index_count, int _indices[],
 			int _attrib_count, Attribute _attribs[]
-		)
+		) :
+			  index_count(_index_count),
+			    draw_mode(_draw_mode),
+			vertex_attrib(std::unique_ptr<Attribute>(_vertex_attrib)),
+			      attribs(std::unique_ptr<Attribute[]>(_attribs))
 		{
-			// initialize variables
-			draw_mode = _draw_mode;
-			vertex_attrib = std::unique_ptr<Attribute>(_vertex_attrib);
-			attribs = std::unique_ptr<Attribute[]>(_attribs);
-
 			// create this vao
 			glCreateVertexArrays(1, &vao);
+			glBindVertexArray(vao);
 
 			// the first attribute is of course vertices
 			add_attribute(*vertex_attrib, 0);
@@ -72,7 +72,7 @@ namespace CNGE7
 			// add index buffer
 			glGenBuffers(1, &ibo);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index_count, _indices, GL_STATIC_DRAW);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, _index_count * sizeof(int), _indices, GL_STATIC_DRAW);
 		}
 
 		~VAO()
@@ -86,6 +86,13 @@ namespace CNGE7
 			glDeleteVertexArrays(1, &vao);
 		}
 
+		/// actually draws this vao
+		void render()
+		{
+			glBindVertexArray(vao);
+			glDrawElements(draw_mode, index_count, GL_UNSIGNED_INT, 0);
+		}
+
 	private:
 
 		GLuint vao;
@@ -95,6 +102,8 @@ namespace CNGE7
 		/* attributes */
 		std::unique_ptr<Attribute> vertex_attrib;
 		std::unique_ptr<Attribute[]> attribs;
+
+		int index_count;
 
 		GLuint ibo;
 

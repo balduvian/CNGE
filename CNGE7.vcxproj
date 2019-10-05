@@ -129,17 +129,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="color_shader.h" />
+    <ClInclude Include="rect.h" />
     <ClInclude Include="loop.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="transform.h" />
+    <ClInclude Include="util.h" />
     <ClInclude Include="vao.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="shaders\color\frag.glsl" />
+    <None Include="shaders\color\vert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
