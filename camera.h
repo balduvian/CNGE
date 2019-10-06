@@ -1,4 +1,10 @@
 
+#pragma once
+
+#include <glm/mat4x4.hpp>
+
+#include "transform.h"
+
 namespace CNGE7
 {
 	class Camera

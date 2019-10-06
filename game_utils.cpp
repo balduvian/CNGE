@@ -1,12 +1,4 @@
 
-
-#include "transform3d.h"
-#include "camera3d.h"
-#include "camera_control.h"
-#include "rect.h"
-#include "fog_shader.h"
-#include "texture.h"
-#include "glm/vec3.hpp"
 #include "util.h"
 
 #include "game_utils.h"

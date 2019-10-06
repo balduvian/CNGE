@@ -1,12 +1,8 @@
+
 #pragma once
 
 #include <GL/glew.h>
 #include <GL/GL.h>
-#include <GL/GLU.h>
-#include <filesystem>
-#include <fstream>
-
-#include <iostream>
 
 namespace CNGE7
 {

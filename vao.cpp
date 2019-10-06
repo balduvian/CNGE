@@ -1,11 +1,4 @@
 
-#include <GL/glew.h>
-#include <gl/GL.h>
-#include <gl/GLU.h>
-#include <memory>
-#include <initializer_list>
-#include <vector>
-
 #include "vao.h"
 
 namespace CNGE7

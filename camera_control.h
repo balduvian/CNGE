@@ -1,10 +1,13 @@
+
 #pragma once
+
+#include <glm/vec3.hpp>
 
 #include "camera3d.h"
 
 namespace Game
 {
-	/// controls 
+
 	class Camera_Control
 	{
 	public:

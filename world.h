@@ -1,4 +1,15 @@
+
 #pragma once
+
+#include <glm/vec3.hpp>
+
+#include "transform3d.h"
+#include "camera3d.h"
+#include "texture.h"
+#include "color_shader.h"
+#include "fog_shader.h"
+#include "rect.h"
+#include "camera_control.h"
 
 namespace Game
 {
@@ -51,4 +62,5 @@ namespace Game
 		int** world;
 
 	};
+
 }

@@ -1,3 +1,4 @@
+
 #pragma once
 
 namespace CNGE7
@@ -22,7 +23,7 @@ namespace CNGE7
 
 		static float tile_values[4];
 
-		GLuint texture;
+		unsigned int texture;
 
 		int width;
 		int height;
@@ -32,4 +33,5 @@ namespace CNGE7
 		void init(const char*);
 
 	};
+
 }

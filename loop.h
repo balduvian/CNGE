@@ -1,4 +1,7 @@
+
 #pragma once
+
+#include <functional>
 
 namespace CNGE7
 {

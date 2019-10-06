@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include "shader.h"
 
 namespace Game

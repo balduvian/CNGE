@@ -1,17 +1,5 @@
-#pragma once
 
-#include <GL\glew.h>
-#include <GL\wglew.h>
-#include <gl/gl.h>
-#include <string>
-#include <functional>
-#include <iostream>
-
-#include <glm/glm.hpp>
-#include <glm/mat4x4.hpp>
 #include "glm/gtc/matrix_transform.hpp"
-
-#include "transform.h"
 
 #include "camera.h"
 

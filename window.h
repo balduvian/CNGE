@@ -1,13 +1,19 @@
+
 #pragma once
+
+#include <gl/glew.h>
+#include <GLFW/glfw3.h>
+
+#include <functional>
 
 namespace CNGE7
 {
 
+	using Resize_Callback = std::function<void(int, int)>;
+
 	class Window
 	{
 	public:
-
-		using Resize_Callback = std::function<void(int, int)>;
 
 		/// initializes GLFW
 		/// you must call this before any other functions

@@ -1,4 +1,9 @@
+
 #pragma once
+
+#include <glm/mat4x4.hpp>
+
+#include "transform3d.h"
 
 namespace CNGE7
 {

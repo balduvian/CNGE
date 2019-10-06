@@ -102,9 +102,6 @@
     <ClInclude Include="game_utils.h">
       <Filter>Source Files\game</Filter>
     </ClInclude>
-    <ClInclude Include="cube.h">
-      <Filter>Source Files\game\shapes</Filter>
-    </ClInclude>
     <ClInclude Include="rect.h">
       <Filter>Source Files\game\shapes</Filter>
     </ClInclude>
@@ -187,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="camera3d.cpp">
       <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="rect.cpp">
+      <Filter>Source Files\game\shapes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

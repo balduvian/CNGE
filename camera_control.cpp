@@ -1,7 +1,6 @@
 
 #include "util.h"
 #include "glm/gtx/rotate_vector.hpp"
-#include "camera3d.h"
 
 #include "camera_control.h"
 

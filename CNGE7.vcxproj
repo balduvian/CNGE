@@ -131,7 +131,6 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="camera3d.h" />
     <ClInclude Include="color_shader.h" />
-    <ClInclude Include="cube.h" />
     <ClInclude Include="fog_shader.h" />
     <ClInclude Include="game_utils.h" />
     <ClInclude Include="player.h" />
@@ -167,6 +166,7 @@
     <ClCompile Include="game_utils.cpp" />
     <ClCompile Include="loop.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="rect.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="tile_shader.cpp" />

@@ -1,19 +1,7 @@
-//
 
-
-#include "rect.h"
 #include "util.h"
-#include "transform3d.h"
-
-#include "texture.h"
-
-#include "fog_shader.h"
-#include "color_shader.h"
-
-#include "camera_control.h"
 #include "game_utils.h"
 
-#include "camera3d.h"
 #include "world.h"
 
 namespace Game

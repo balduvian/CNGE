@@ -1,4 +1,12 @@
+
 #pragma once
+
+#include <glm/vec2.hpp>
+
+#include "camera3d.h"
+#include "rect.h"
+#include "color_shader.h"
+#include "window.h"
 
 namespace Game
 {

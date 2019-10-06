@@ -1,5 +1,4 @@
 
-
 #include "window.h"
 
 #include "util.h"
@@ -10,7 +9,6 @@
 #include "camera3d.h"
 
 #include "rect.h"
-#include "cube.h"
 #include "texture.h"
 #include "tile_shader.h"
 #include "color_shader.h"
@@ -45,7 +43,6 @@ int main()
 
 	auto player_rect = Game::Player_Rect();
 	auto rect = Game::Rect();
-	auto cube = Game::Cube();
 
 	auto grass_texture = CNGE7::Texture("images/grass.png");
 	auto bush_texture = CNGE7::Texture("images/bush.png", 2);
@@ -112,4 +109,5 @@ int main()
 	window.close();
 
 	return 0;
+
 }

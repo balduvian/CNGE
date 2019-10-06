@@ -1,13 +1,10 @@
-#pragma once
 
 #define GLEW_STATIC
 
 #include <GL\glew.h>
-#include <GL\wglew.h>
 #include <gl/gl.h>
-#include "GLFW/glfw3.h"
+
 #include <string>
-#include <functional>
 #include <iostream>
 
 #include "window.h"

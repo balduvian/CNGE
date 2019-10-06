@@ -1,8 +1,4 @@
 
-#include "glm/glm.hpp"
-
-#include "shader.h"
-
 #include "fog_shader.h"
 
 namespace Game

@@ -1,6 +1,4 @@
 
-#include "shader.h"
-
 #include "tile_shader.h"
 
 namespace Game

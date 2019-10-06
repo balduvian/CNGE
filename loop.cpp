@@ -1,8 +1,6 @@
 
-#include <time.h>
 #include <chrono>
 #include <memory>
-#include <functional>
 
 #include "loop.h"
 

@@ -1,8 +1,11 @@
 
 #include <gl/glew.h>
 #include <GL/GL.h>
-#include <glm/glm.hpp>
+
+#include <glm/vec2.hpp>
 #include <glm/gtc/noise.hpp>
+
+#include "util.h"
 
 namespace CNGE7
 {

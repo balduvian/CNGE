@@ -1,4 +1,8 @@
 
+#pragma once
+
+#include <glm/vec3.hpp>
+
 #include "shader.h"
 
 namespace Game

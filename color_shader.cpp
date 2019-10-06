@@ -1,6 +1,4 @@
 
-#include "shader.h"
-
 #include "color_shader.h"
 
 namespace Game

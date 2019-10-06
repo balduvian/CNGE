@@ -1,15 +1,8 @@
 
-
 #include "util.h"
 
-#include "glm/glm.hpp"
-#include "glm/vec3.hpp"
-#include "glm/gtx/vector_angle.hpp"
-#include "camera3d.h"
-#include "rect.h"
-#include "color_shader.h"
-#include "transform3d.h"
-#include "window.h"
+#include <glm/vec3.hpp>
+#include <glm/gtx/vector_angle.hpp>
 
 #include "player.h"
 
@@ -107,7 +100,7 @@ namespace Game
 			float friction_angle = glm::orientedAngle(norm_velocity, glm::vec2(1, 0)) + CNGE7::PI;
 
 			// friction can't be greater than your movement
-			float friction_length = min(glm::length(velocity), friction);
+			float friction_length = fmin(glm::length(velocity), friction);
 
 			auto friction_force = glm::vec2(cos(friction_angle), sin(friction_angle)) * friction_length;
 
