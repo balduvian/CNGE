@@ -29,7 +29,7 @@ namespace Game
 	}
 
 	float FOG_NEAR = 3;
-	float FOG_FAR = 5;
+	float FOG_FAR = 7;
 
 	float FOG_RED = 0.1f;
 	float FOG_GREEN = 0.12f;

@@ -34,6 +34,8 @@ namespace Game
 
 		int** get();
 
+		void update(double);
+
 		void render(
 			int _x,
 			int _y,
@@ -41,6 +43,16 @@ namespace Game
 			Camera_Control*,
 			int radius,
 			float base_height);
+		
+		int get_width();
+
+		int get_height();
+
+		int loc_to_tile(float loc);
+
+		int get_tile(int, int);
+
+		void set_tile(int, int, int);
 
 	private:
 
@@ -55,6 +67,11 @@ namespace Game
 		Fog_Shader* fog_shader;
 		Rect* rect;
 		Player_Rect* player_rect;
+
+		static double tick_time;
+		static int tick_speed;
+
+		double tick_timer;
 
 		int width;
 		int height;

@@ -48,8 +48,16 @@ namespace Game
 			0, 1, 2,
 			0, 2, 3
 		},
-		0,
-		nullptr
+		1,
+		new CNGE7::Attribute[1]
+		{
+			CNGE7::Attribute(2, 8, new float[8] {
+				0, 1,
+				1, 1,
+				1, 0,
+				0, 0
+			})
+		}
 	) {}
 
 }

@@ -21,9 +21,14 @@ namespace Game
 
 	void Camera_Control::rotate(float _delta)
 	{
-		angle += _delta;
-		angle = CNGE7::mod(angle, CNGE7::PI * 2);
+		angle = CNGE7::mod(_delta, CNGE7::PI * 2);
 	}
+
+	float Camera_Control::get_angle()
+	{
+		return angle;
+	}
+
 
 	void Camera_Control::move_vertical(float _delta)
 	{
@@ -36,9 +41,5 @@ namespace Game
 			height = max_height;
 	}
 
-	float Camera_Control::get_angle()
-	{
-		return angle;
-	}
-
+	
 }

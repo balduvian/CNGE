@@ -67,7 +67,7 @@ namespace CNGE7
 		bool v_sync,
 		Resize_Callback resize_callback
 	) :
-		keys_pressed()
+		keys_pressed(), cursor_x(), cursor_y(), left_click(), right_click()
 	{
 		// set hints
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major_version);
@@ -101,43 +101,69 @@ namespace CNGE7
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(v_sync);
 
+		glfwShowWindow(window);
+		glfwFocusWindow(window);
+
 		// store this into glfw, "thanks c libraries" -slab 2019
 		glfwSetWindowUserPointer(window, this);
 
 		glfwSetWindowSizeCallback(window, [](auto window, auto width, auto height)
-			{
-				// grab this window class
-				auto this_ptr = (Window*)glfwGetWindowUserPointer(window);
+		{
+			// grab this window class
+			auto this_ptr = (Window*)glfwGetWindowUserPointer(window);
 
-				// first set internal dimension values
-				this_ptr->width = width;
-				this_ptr->height = height;
+			// first set internal dimension values
+			this_ptr->width = width;
+			this_ptr->height = height;
 
-				// then do user defined things
-				this_ptr->resize_callback(width, height);
-			});
+			// then do user defined things
+			this_ptr->resize_callback(width, height);
+		});
 
+		
 		// set keys pressed in an array
 		glfwSetKeyCallback(window, [](auto window, auto key, auto scancode, auto action, auto mods)
+		{
+			auto this_ptr = (Window*)glfwGetWindowUserPointer(window);
+
+			// make sure we don't have garbage keys
+			if (key != GLFW_KEY_UNKNOWN && key >= 0 && key < GLFW_KEY_LAST)
 			{
-				auto this_ptr = (Window*)glfwGetWindowUserPointer(window);
-
-				// make sure we don't have garbage keys
-				if (key >= 0 && key < GLFW_KEY_LAST)
+				if (action == GLFW_PRESS)
 				{
-					if (action == GLFW_PRESS)
-					{
-						this_ptr->keys_pressed[key] = true;
-					}
-					else if (action == GLFW_RELEASE)
-					{
-						this_ptr->keys_pressed[key] = false;
-					}
+					this_ptr->keys_pressed[key] = true;
 				}
-			});
+				else if (action == GLFW_RELEASE)
+				{
+					this_ptr->keys_pressed[key] = false;
+				}
+			}
+		});
+	
+		// make supa scroll
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		glfwShowWindow(window);
-		glfwFocusWindow(window);
+		glfwSetCursorPosCallback(window, [](auto window, auto x, auto y)
+		{
+			auto this_ptr = (Window*)glfwGetWindowUserPointer(window);
+
+			this_ptr->cursor_x = x;
+			this_ptr->cursor_y = y;
+		});
+
+		glfwSetMouseButtonCallback(window, [](auto window, auto button, auto action, auto mods)
+		{
+			auto this_ptr = (Window*)glfwGetWindowUserPointer(window);
+
+			if (button == GLFW_MOUSE_BUTTON_1)
+			{
+				this_ptr->left_click = action == GLFW_PRESS;
+			}
+			else if (button == GLFW_MOUSE_BUTTON_2)
+			{
+				this_ptr->right_click = action == GLFW_PRESS;
+			}
+		});
 	}
 
 	bool Window::get_key_pressed(int _key_code)
@@ -177,24 +203,43 @@ namespace CNGE7
 	void Window::close()
 	{
 		glfwSetWindowShouldClose(window, true);
+
+		glfwDestroyWindow(window);
+
+		glfwTerminate();
 	}
 
 	/*
-		* getters
-		*/
+	 * getters
+	 */
 
 		/// put thisd in a loop to know when the window is closed
 	bool Window::get_should_close()
 	{
 		auto ret = glfwWindowShouldClose(window);
 		if (ret == GLFW_TRUE)
-			glfwTerminate();
+			//glfwTerminate();
 		return ret;
 	}
 
 	int Window::get_refresh_rate()
 	{
 		return video_mode->refreshRate;
+	}
+
+	double Window::get_cursor_x()
+	{
+		return cursor_x;
+	}
+
+	bool Window::get_left_click()
+	{
+		return left_click;
+	}
+
+	bool Window::get_right_click()
+	{
+		return right_click;
 	}
 
 }

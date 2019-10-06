@@ -105,6 +105,9 @@
     <ClInclude Include="rect.h">
       <Filter>Source Files\game\shapes</Filter>
     </ClInclude>
+    <ClInclude Include="title.h">
+      <Filter>Source Files\game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -187,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="rect.cpp">
       <Filter>Source Files\game\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="title.cpp">
+      <Filter>Source Files\game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,5 +10,5 @@ out vec4 color;
 
 void main()
 {
-    color = texture(tex, tex_pass);// * in_color;
+    color = texture(tex, tex_pass) * in_color;
 }

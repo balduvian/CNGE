@@ -18,8 +18,11 @@
 
 #include "game_utils.h"
 
+#include "title.h"
 #include "player.h"
 #include "world.h"
+
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
 int main()
 {
@@ -27,7 +30,7 @@ int main()
 
 	auto monitor = CNGE7::Window::get_first_monitor();
 
-	auto window = CNGE7::Window(3, 3, true, true, "Skeekers", monitor, false, true, [](auto w, auto h) {});
+	auto window = CNGE7::Window(3, 3, true, true, "Skek Grove", monitor, false, true, [](auto w, auto h) {});
 
 	CNGE7::Window::wrangle();
 
@@ -44,8 +47,11 @@ int main()
 	auto player_rect = Game::Player_Rect();
 	auto rect = Game::Rect();
 
-	auto grass_texture = CNGE7::Texture("images/grass.png");
-	auto bush_texture = CNGE7::Texture("images/bush.png", 2);
+	auto grass_texture = CNGE7::Texture("images/grass.png", 2);
+	auto bush_texture = CNGE7::Texture("images/bush.png", 8);
+	auto player_texture = CNGE7::Texture("images/player.png", 18);
+	auto title_texture = CNGE7::Texture("images/title.png", 1);
+	auto berry_texture = CNGE7::Texture("images/berry.png", 1);
 
 	auto tile_shader = Game::Tile_Shader();
 	auto color_shader = Game::Color_Shader();
@@ -64,44 +70,104 @@ int main()
 
 	auto camera_control = Game::Camera_Control(&camera3d, 2, 4, 3);
 
-	auto player = Game::Player(4.5f, 4.5f, &camera3d, &player_rect, &color_shader);
+	//auto player = Game::Player(4.5f, 4.5f, &camera3d, &player_rect, &color_shader);
 
+	std::unique_ptr<Game::Player> player = {};
+
+	// load in title
+	auto title = Game::Title();
 	//load world
 	auto world = Game::World(65, 65, &camera3d, &grass_texture, &bush_texture, &color_shader, &fog_shader, &rect, &player_rect);
+
+	float spawn_x = world.get_width() / 2.f;
+	float spawn_z = world.get_height() / 2.f;
+	auto spawn_vec = glm::vec3(spawn_x, 0, spawn_z);
 
 	transform3d.scale = { 1, 2, 1 };
 	transform3d.rotation = { 0, 0.324f, 1.324f };
 	transform3d.translation = { 0, -1, -3 };
 
 	// begin the game
-	CNGE7::Loop(window.get_refresh_rate(), std::bind(&CNGE7::Window::get_should_close, window), [&](auto fps, auto delta, auto time)
+	CNGE7::Loop(window.get_refresh_rate() + 5, std::bind(&CNGE7::Window::get_should_close, window), [&](auto fps, auto delta, auto time)
 		{
 			window.poll();
 
-			player.update(window, camera_control.get_angle(), time);
+			/*
+			 * UPDATE
+			 */
+
+			// on the title screen
+			if (player.get() == nullptr)
+			{
+				if (title.update(window, time))
+					// create the p[layer
+					player = std::unique_ptr<Game::Player>(new Game::Player(spawn_x, spawn_z, &camera3d, &player_rect, &color_shader));
+
+				camera_control.rotate(window.get_cursor_x() * 0.01f);
+				camera_control.update(spawn_vec);
+			}
+			// when we're playing the game
+			else
+			{
+				
+				world.update(time);
+
+				player->update(window, camera_control.get_angle(), time, 0, world.get_width(), 0, world.get_height(), world);
+
+				camera_control.rotate(window.get_cursor_x() * 0.01f);
+				camera_control.update(player->transform3d.translation);
+			}
 
 			camera.update();
-
-			//camera_control.rotate(time * CNGE7::PI * 0.5f);
-			camera_control.update(player.transform3d.translation);
 			camera3d.update();
+
+			/*
+			 * RENDER
+			 */
 
 			CNGE7::clear(Game::FOG_RED, Game::FOG_GREEN, Game::FOG_BLUE, Game::FOG_ALPHA);
 
-			glEnable(GL_TEXTURE_2D);
+			if (player.get() == nullptr)
+			{
+				world.render(world.get_width() / 2.f, world.get_height() / 2.f, spawn_vec, &camera_control, Game::FOG_FAR + 1, 0);
 
-			//debug render
-			grass_texture.bind();
-			tile_shader.enable(transform.to_model(), camera.get_projview());
-			tile_shader.give_params(1, 0.5f, 0.f, 1, grass_texture.get_sheet(0));
-			//color_shader.enable(transform.to_model(), camera.get_projview());
-			//color_shader.give_color(1, 0.5f, 0.f, 1);
-			rect.render();
+				title.render(camera, title_texture, tile_shader, player_rect);
+			}
+			else
+			{
+				world.render(player->get_x(), player->get_z(), player->transform3d.translation, &camera_control, Game::FOG_FAR + 1, 0);
+				player->render(&camera_control, &player_texture, &fog_shader);
+				
+				// render inventory of berries
+				auto num = player->get_inventory();
 
-			// render world
-			world.render(player.get_x(), player.get_z(), player.transform3d.translation, &camera_control, 5, 0);
+				berry_texture.bind();
 
-			player.render();
+				transform.scale = { 1, 1, 1 };
+				transform.translation = { 0, 1, 0 };
+				transform.rotation = 0;
+
+				auto total_width = 16;
+				auto using_width = 8;
+
+				auto start_x = (total_width - using_width) / 2.f;
+
+				auto width_fraction = (1.f / num) * using_width;
+
+				glDisable(GL_DEPTH_TEST);
+
+				for (auto i = 0; i < num; ++i)
+				{
+					transform.translation.x = start_x + (((i * width_fraction) + ((i + 1) * width_fraction)) / 2.f);
+
+					tile_shader.enable(transform.to_model(), camera.get_projection());
+					tile_shader.give_params(1, 1, 1, 1, berry_texture.get_sheet(0));
+
+					player_rect.render();
+				}
+
+				glEnable(GL_DEPTH_TEST);
+			}
 
 			window.swap();
 		});

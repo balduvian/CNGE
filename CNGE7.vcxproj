@@ -87,12 +87,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\include;C:\Users\Emmet\Programming\libraries\glfw-3.3\include;C:\Users\Emmet\Programming\libraries\glm-0.9.9.6;C:\Users\Emmet\Programming\libraries\libpng64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\include;C:\Users\Emmet\Programming\libraries\glfw-3.3\include;C:\Users\Emmet\Programming\libraries\glm-0.9.9.6;C:\Users\Emmet\Programming\libraries\libpng64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\lib\Release\x64;C:\Users\Emmet\Programming\libraries\glfw-3.3\lib-vc2019;C:\Users\Emmet\Programming\libraries\libpng64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glew32s.lib;opengl32.lib;glfw3.lib;libpngstat.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -120,11 +120,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\include;C:\Users\Emmet\Programming\libraries\glfw-3.3\include;C:\Users\Emmet\Programming\libraries\glm-0.9.9.6;C:\Users\Emmet\Programming\libraries\libpng64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\lib\Release\x64;C:\Users\Emmet\Programming\libraries\glfw-3.3\lib-vc2019;C:\Users\Emmet\Programming\libraries\libpng64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;opengl32.lib;glfw3.lib;libpngstat.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -139,6 +143,7 @@
     <ClInclude Include="shader.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="tile_shader.h" />
+    <ClInclude Include="title.h" />
     <ClInclude Include="transform.h" />
     <ClInclude Include="transform3d.h" />
     <ClInclude Include="util.h" />
@@ -170,6 +175,7 @@
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="tile_shader.cpp" />
+    <ClCompile Include="title.cpp" />
     <ClCompile Include="transform.cpp" />
     <ClCompile Include="transform3d.cpp" />
     <ClCompile Include="util.cpp" />

@@ -1,4 +1,6 @@
 
+#include <time.h> 
+
 #include "util.h"
 #include "game_utils.h"
 
@@ -27,7 +29,8 @@ namespace Game
 		fog_shader(_fog_shader), 
 		rect(_rect),
 		player_rect(_player_rect),
-		transform3d()
+		transform3d(),
+		tick_timer(tick_time)
 	{
 		// fill world array
 		world = new int* [width];
@@ -41,6 +44,20 @@ namespace Game
 			}
 		}
 
+		// generate bushes
+		auto total = (int)roundf(width * height * 0.15f);
+
+		srand(time(nullptr));
+
+		for (auto i = 0; i < total; ++i)
+		{
+			auto x = rand() % width;
+			auto y = rand() % height;
+
+			auto inital_growth = rand() % 3;
+
+			world[x][y] = inital_growth + 1;
+		}
 	}
 
 	World::~World()
@@ -59,16 +76,19 @@ namespace Game
 
 	void World::render(int _x, int _y, glm::vec3& player_pos, Camera_Control* camera_control, int radius, float base_height)
 	{
-		auto left = limit(_x - radius, width);
-		auto right = limit(_x + radius, width);
+		auto left = _x - radius;
+		auto right = _x + radius;
 
-		auto down = limit(_y - radius, height);
-		auto up = limit(_y + radius, height);
+		auto down = _y - radius;
+		auto up = _y + radius;
 
 		for (auto i = left; i <= right; ++i)
 		{
 			for (auto j = down; j <= up; ++j)
 			{
+				// for displaying rocks
+				bool out_of_bounds = i < 0 || j < 0 || i >= width || j >= height;
+
 				grass_texture->bind();
 
 				transform3d.scale = { 1, 1, 1 };
@@ -78,17 +98,36 @@ namespace Game
 				fog_shader->enable(transform3d.to_model(), camera3d->get_projview());
 
 				auto color = CNGE7::noise_map(i * 0.98f, j * 0.98f);
+
+				// range limit the color
+				auto high = 1.f;
+				auto low = 0.65f;
+				color = (high - low) * color + low;
+
 				fog_shader->give_params(
-					color * 0.1f, color, color * 0.1f, 1,
-					0.1f, 0.17f, 0.43f, 1,
+					1 * color, 1 * color, 1 * color , 1,
+					FOG_RED, FOG_GREEN, FOG_BLUE, FOG_ALPHA,
 					player_pos,
-					3,
-					4,
-					grass_texture->get_sheet(0)
+					FOG_NEAR,
+					FOG_FAR,
+					grass_texture->get_sheet(out_of_bounds ? 1 : 0)
 				);
 
 				rect->render();
+			}
+		}
 
+		auto limit_left = limit(left, width);
+		auto limit_right = limit(right, width);
+
+		auto limit_down = limit(down, height);
+		auto limit_up = limit(up, height);
+
+		// second pass for bushes
+		for (auto i = limit_left; i <= limit_right; ++i)
+		{
+			for (auto j = limit_down; j <= limit_up; ++j)
+			{
 				// if we draw a bush
 				if (world[i][j] != 0)
 				{
@@ -104,7 +143,7 @@ namespace Game
 						bush_texture,
 						fog_shader,
 						1, 1, 1, 1,
-						bush_texture->get_sheet(world[i][j]),
+						bush_texture->get_sheet(world[i][j] - 1),
 						player_pos
 					);
 				}
@@ -122,4 +161,62 @@ namespace Game
 		return in;
 	}
 
+	int World::get_width()
+	{
+		return width;
+	}
+
+	int World::get_height()
+	{
+		return height;
+	}
+
+	int World::loc_to_tile(float loc)
+	{
+		return (int)floorf(loc);
+	}
+
+	int World::get_tile(int x, int y)
+	{
+		if (x < 0 || y < 0 || !(x < width && y < height))
+		{
+			return -1;
+		}
+		
+		return world[x][y];
+	}
+
+	void World::set_tile(int x, int y, int tile)
+	{
+		world[x][y] = tile;
+	}
+
+	void World::update(double time)
+	{
+		tick_timer -= time;
+		if (tick_timer <= 0)
+		{
+			//reset
+			tick_timer = tick_time - tick_timer;
+
+			for (auto i = 0; i < tick_speed; ++i)
+			{
+				auto x = rand() % width;
+				auto y = rand() % height;
+
+				// try to grow a berry
+				if (world[x][y] != 0)
+				{
+					if (world[x][y] == 8)
+						world[x][y] = 0;
+					else
+						++world[x][y];
+				}
+
+			}
+		}
+	}
+
+	double World::tick_time = 0.05;
+	int World::tick_speed = 3;
 }

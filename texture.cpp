@@ -112,7 +112,7 @@ namespace CNGE7
 
 		// make sure it's rgba
 		if (color_type == PNG_COLOR_TYPE_RGB)
-			png_set_filler(png_p, 0x00, PNG_FILLER_AFTER);
+			png_set_filler(png_p, 0xff, PNG_FILLER_AFTER);
 
 		auto number_of_passes = png_set_interlace_handling(png_p);
 		png_read_update_info(png_p, info_p);
@@ -122,13 +122,16 @@ namespace CNGE7
 			throw "could not be read";
 
 		// create the 1D array
-		auto row_ps = new pixel[width * height * 4];
+		auto row_ps = new pixel[width * height * 4llu];
 		auto row_m = row_ps;
 
 		for (int i = 0; i < height; ++i)
 		{
+			auto adv = png_get_rowbytes(png_p, info_p);
+
 			png_read_row(png_p, row_m, nullptr);
-			row_m += width * 4;
+		
+			row_m += adv;
 		}
 
 		fclose(filepoint);
@@ -145,7 +148,7 @@ namespace CNGE7
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		// load texture data
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, row_ps);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, row_ps);
 
 		//delete image
 		delete[] row_ps;

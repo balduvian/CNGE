@@ -12,7 +12,7 @@ out vec2 tex_pass;
 
 void main()
 {
-    tex_pass = tex_coord;//(tex_coord * tex_modif.xy) + tex_modif.zw;
+    tex_pass = (tex_coord * tex_modif.xy) + tex_modif.zw;
 
     gl_Position = (proj_view * model) * vec4(vertex, 1);
 }

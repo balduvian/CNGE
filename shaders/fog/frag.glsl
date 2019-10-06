@@ -21,5 +21,9 @@ void main()
 
 	float along = smoothstep(fog.x, fog.y, dist);
 
-	color = mix(texture(tex, tex_pass) * in_color, fog_color, along);
+	vec4 tex_color = texture(tex, tex_pass) * in_color;
+
+	if (tex_color.w < 0.5) { discard; }
+
+	color = vec4(mix(tex_color, fog_color, along).xyz, tex_color.w);
 }

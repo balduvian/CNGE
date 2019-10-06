@@ -70,9 +70,21 @@ namespace CNGE7
 
 		int get_refresh_rate();
 
+		double get_cursor_x();
+
+		bool get_left_click();
+
+		bool get_right_click();
+
 	private:
 
-		bool keys_pressed[GLFW_KEY_LAST];
+		//input
+		bool keys_pressed[GLFW_KEY_LAST + 1];
+		double cursor_x;
+		double cursor_y;
+
+		bool left_click;
+		bool right_click;
 
 		GLFWwindow* window;
 		GLFWmonitor* monitor;
