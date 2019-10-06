@@ -13,47 +13,180 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\shaders">
+      <UniqueIdentifier>{97ec5946-443d-4e03-b617-5024ae20528e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders\color">
+      <UniqueIdentifier>{60637276-fa94-4ef9-99af-e9519d34c23c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine">
+      <UniqueIdentifier>{e4fd6fdd-a481-479b-afc4-1addac548dd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game">
+      <UniqueIdentifier>{d21f8a73-fc89-4106-9ed5-f8eaebae958b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\player">
+      <UniqueIdentifier>{f9e93889-ab46-4883-b2b5-8faa4e27a0ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\world">
+      <UniqueIdentifier>{668f47c3-51eb-422d-b11d-62a539307c7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\color_shader">
+      <UniqueIdentifier>{b0c71371-10bc-406f-9805-c1714487aa86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine\shader">
+      <UniqueIdentifier>{3b3f16ab-ab25-4d5e-ac4d-1d21ea41aa80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders\fog">
+      <UniqueIdentifier>{98525772-4395-4330-9ca5-8d725ff5d5f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\fog_shader">
+      <UniqueIdentifier>{8337fcbb-06d4-4f08-ac3a-c9e691e74ce4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders\tile">
+      <UniqueIdentifier>{8497b1ba-6b63-488e-9e6b-db22274dc8f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\tile_shader">
+      <UniqueIdentifier>{97a27e35-8c35-4290-9ab7-aecb3d54acfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\shapes">
+      <UniqueIdentifier>{71aadd66-d0ed-472a-b544-e6a2180924da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="window.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="loop.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vao.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="shader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="camera.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="camera3d.h">
+      <Filter>Source Files\engine</Filter>
     </ClInclude>
     <ClInclude Include="transform.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\engine</Filter>
     </ClInclude>
-    <ClInclude Include="rect.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="transform3d.h">
+      <Filter>Source Files\engine</Filter>
     </ClInclude>
-    <ClInclude Include="color_shader.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="loop.h">
+      <Filter>Source Files\engine</Filter>
     </ClInclude>
     <ClInclude Include="util.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="vao.h">
+      <Filter>Source Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="window.h">
+      <Filter>Source Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>Source Files\game\player</Filter>
+    </ClInclude>
+    <ClInclude Include="world.h">
+      <Filter>Source Files\game\world</Filter>
+    </ClInclude>
+    <ClInclude Include="color_shader.h">
+      <Filter>Source Files\game\color_shader</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>Source Files\engine\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="fog_shader.h">
+      <Filter>Source Files\game\fog_shader</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>Source Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="tile_shader.h">
+      <Filter>Source Files\game\tile_shader</Filter>
+    </ClInclude>
+    <ClInclude Include="game_utils.h">
+      <Filter>Source Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="cube.h">
+      <Filter>Source Files\game\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="rect.h">
+      <Filter>Source Files\game\shapes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="shaders\color\frag.glsl" />
-    <None Include="shaders\color\vert.glsl" />
+    <None Include="shaders\color\frag.glsl">
+      <Filter>Source Files\shaders\color</Filter>
+    </None>
+    <None Include="shaders\color\vert.glsl">
+      <Filter>Source Files\shaders\color</Filter>
+    </None>
+    <None Include="shaders\fog\frag.glsl">
+      <Filter>Source Files\shaders\fog</Filter>
+    </None>
+    <None Include="shaders\fog\vert.glsl">
+      <Filter>Source Files\shaders\fog</Filter>
+    </None>
+    <None Include="shaders\tile\frag.glsl">
+      <Filter>Source Files\shaders\tile</Filter>
+    </None>
+    <None Include="shaders\tile\vert.glsl">
+      <Filter>Source Files\shaders\tile</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\game</Filter>
     </ClCompile>
     <ClCompile Include="transform.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="camera_control.h">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="camera_control.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>Source Files\game\player</Filter>
+    </ClCompile>
+    <ClCompile Include="world.cpp">
+      <Filter>Source Files\game\world</Filter>
+    </ClCompile>
+    <ClCompile Include="vao.cpp">
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="color_shader.cpp">
+      <Filter>Source Files\game\color_shader</Filter>
+    </ClCompile>
+    <ClCompile Include="shader.cpp">
+      <Filter>Source Files\engine\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="fog_shader.cpp">
+      <Filter>Source Files\game\fog_shader</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="tile_shader.cpp">
+      <Filter>Source Files\game\tile_shader</Filter>
+    </ClCompile>
+    <ClCompile Include="game_utils.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="loop.cpp">
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="transform3d.cpp">
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="window.cpp">
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="camera3d.cpp">
+      <Filter>Source Files\engine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

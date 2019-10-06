@@ -1,28 +1,56 @@
 #pragma once
 
-//#include "vao.h"
+#include "vao.h"
 
-namespace CNGE7
+namespace Game
 {
-	class Rect : public VAO
+	class Rect : public CNGE7::VAO
 	{
 	public:
 		Rect() : VAO(
 			GL_TRIANGLES,
-			Attribute::create_vertex_attribute(12, new float[12]
-				{
-					0, 0, 0,
-					0, 1, 0,
-					1, 1, 0,
-					1, 0, 0
-				}
-			),
-			6, new int[6]
-			{
-				0, 1, 2,
-				2, 3, 0
+			CNGE7::Attribute::create_vertex_attribute(12, new float[12]{
+				0, 0, 0,
+				0, 1, 0,
+				1, 1, 0,
+				1, 0, 0
+				}),
+			6,
+			new int[6]{
+				0, 3, 2,
+				0, 2, 1
 			},
-			0, nullptr
+			1,
+			new CNGE7::Attribute[1]
+			{
+				CNGE7::Attribute(2, 8, new float[8] {
+					0, 1,
+					0, 0,
+					1, 0,
+					1, 1
+				})
+			}
+		) {}
+	};
+
+	class Player_Rect : public CNGE7::VAO
+	{
+	public:
+		Player_Rect() : VAO(
+			GL_TRIANGLES,
+			CNGE7::Attribute::create_vertex_attribute(12, new float[12]{
+				-.5, 0, 0,
+				.5, 0, 0,
+				.5, 1, 0,
+				-.5, 1, 0
+				}),
+			6,
+			new int[6]{
+				0, 1, 2,
+				0, 2, 3
+			},
+			0,
+			nullptr
 		) {}
 	};
 }

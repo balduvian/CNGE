@@ -87,14 +87,14 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\include;C:\Users\Emmet\Programming\libraries\glfw-3.3\include;C:\Users\Emmet\Programming\libraries\glm-0.9.9.6</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\include;C:\Users\Emmet\Programming\libraries\glfw-3.3\include;C:\Users\Emmet\Programming\libraries\glm-0.9.9.6;C:\Users\Emmet\Programming\libraries\libpng64\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\lib\Release\x64;C:\Users\Emmet\Programming\libraries\glfw-3.3\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Emmet\Programming\libraries\glew-2.1.0\lib\Release\x64;C:\Users\Emmet\Programming\libraries\glfw-3.3\lib-vc2019;C:\Users\Emmet\Programming\libraries\libpng64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32s.lib;opengl32.lib;glfw3.lib;libpngstat.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,23 +129,53 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="camera3d.h" />
     <ClInclude Include="color_shader.h" />
+    <ClInclude Include="cube.h" />
+    <ClInclude Include="fog_shader.h" />
+    <ClInclude Include="game_utils.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="rect.h" />
     <ClInclude Include="loop.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="texture.h" />
+    <ClInclude Include="tile_shader.h" />
     <ClInclude Include="transform.h" />
+    <ClInclude Include="transform3d.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="vao.h" />
     <ClInclude Include="window.h" />
+    <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="shaders\color\frag.glsl" />
     <None Include="shaders\color\vert.glsl" />
+    <None Include="shaders\fog\frag.glsl" />
+    <None Include="shaders\fog\vert.glsl" />
+    <None Include="shaders\tile\frag.glsl" />
+    <None Include="shaders\tile\vert.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="camera3d.cpp" />
+    <ClCompile Include="camera_control.cpp" />
+    <ClCompile Include="camera_control.h" />
+    <ClCompile Include="color_shader.cpp" />
+    <ClCompile Include="fog_shader.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="game_utils.cpp" />
+    <ClCompile Include="loop.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="texture.cpp" />
+    <ClCompile Include="tile_shader.cpp" />
     <ClCompile Include="transform.cpp" />
+    <ClCompile Include="transform3d.cpp" />
+    <ClCompile Include="util.cpp" />
+    <ClCompile Include="vao.cpp" />
+    <ClCompile Include="window.cpp" />
+    <ClCompile Include="world.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

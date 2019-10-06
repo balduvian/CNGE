@@ -2,7 +2,9 @@
 
 namespace CNGE7
 {
-	class Transform
+	/// note that this class shares a bunch of static stuff
+	/// with the transform class (is a friend)
+	class Transform3D
 	{
 	public:
 
@@ -10,15 +12,12 @@ namespace CNGE7
 		 * initializers for the default model and projection value arrays
 		 */
 
-		static float default_model[16];
-		static float default_projview[16];
-
 		glm::vec3 translation;
 		glm::vec3 scale;
-		float rotation;
+		glm::vec3 rotation;
 
 		/// default initialization
-		Transform();
+		Transform3D();
 
 		/// returns the float values for a model matrix based on this transform
 		float* to_model();
@@ -26,7 +25,7 @@ namespace CNGE7
 		/// returns the float values for a model matrix based on given params
 		/// no instance of a transform needed
 		/// no rotation
-		static float* to_model(float x, float y, float width, float height);
+		static float* to_model(float _x, float _y, float _z, float _width, float _height, float _depth);
 
 		/// modifies a mat4 based on this transform
 		void transform(glm::mat4& _mat);
@@ -34,16 +33,6 @@ namespace CNGE7
 		/// modify this matrix for the camera, everything is negative
 		glm::mat4 camera_transform();
 
-		static void copy_mat(glm::mat4& _from_mat, float* _to_values);
-
-		static void __DEBUG_PRINT(float* _mat);
-		
-	private:
-		
-		/// allow transform 3d to share values
-		friend class Transform3D;
-
-		/// used for returning model matrix values
-		static float values[16];
 	};
+
 }
