@@ -1,0 +1,27 @@
+
+cmake_minimum_required(VERSION 3.16)
+project(CNGE_8_2 C CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
+
+file(GLOB_RECURSE SOURCES
+	src/*.h
+	src/*.cpp
+)
+
+add_executable(CNGE_8_2 ${SOURCE_FILES} ${SOURCES})
+
+include_directories(C:/Users/Emmet/Programming/lib/libpng-1.6.0/include)
+include_directories(C:/Users/Emmet/Programming/lib/libjpeg)
+include_directories(C:/Users/Emmet/Programming/lib/glew-2.1.0/include)
+include_directories(C:/Users/Emmet/Programming/lib/glfw-3.2.2/include)
+include_directories(C:/Users/Emmet/Programming/lang/cpp/CNGE82/src)
+include_directories("C:/Program Files (x86)/OpenAL 1.1 SDK/include")
+
+target_link_libraries(CNGE_8_2 C:/Users/Emmet/Programming/lib/libpng-1.6.0/lib/libpngstat.lib)
+target_link_libraries(CNGE_8_2 C:/Users/Emmet/Programming/lib/libpng-1.6.0/lib/zlibstat.lib)
+target_link_libraries(CNGE_8_2 C:/Users/Emmet/Programming/lib/libjpeg/build/Release/jpeg.lib)
+target_link_libraries(CNGE_8_2 C:/Users/Emmet/Programming/lib/glew-2.1.0/lib/Release/x64/glew32s.lib)
+target_link_libraries(CNGE_8_2 C:/Users/Emmet/Programming/lib/glfw-3.2.2/lib/glfw3.lib)
+target_link_libraries(CNGE_8_2 "C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64/OpenAL32.lib")
