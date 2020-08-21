@@ -40,7 +40,7 @@ class Vector;
 #include <ostream>
 #include <initializer_list>
 
-#include "Vector.h"
+#include "vector.h"
 
 template <u32 N, u32 M, typename T>
 class Matrix {

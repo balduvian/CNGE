@@ -39,15 +39,16 @@ namespace CNGE {
 		/* calculate how long this frame took */
 		const auto delta = now - last;
 
-		if (delta.count() < frameTime(fps) * 2_i64) {
-			/* no lag happened, frames as usual */
-			next = last + nanos(frameTime(fps) * 2);
-			last = last + nanos(frameTime(fps));
-		} else {
-			/* lag detected! reset */
-			next = now + nanos(frameTime(fps));
-			last = now;
-		}
+		if (!sanic)
+			if (delta.count() < frameTime(fps) * 2_i64) {
+				/* no lag happened, frames as usual */
+				next = last + nanos(frameTime(fps) * 2);
+				last = last + nanos(frameTime(fps));
+			} else {
+				/* lag detected! reset */
+				next = now + nanos(frameTime(fps));
+				last = now;
+			}
 
 		/* record how long this frame took */
 		*frameIter = delta;

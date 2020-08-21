@@ -37,7 +37,7 @@ class Vector;
 #ifndef CNGE_VECTOR1
 #define CNGE_VECTOR1
 
-#include "Vector.h"
+#include "vector.h"
 
 template <typename T> using Vector1 = Vector<1, T>;
 

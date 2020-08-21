@@ -1,10 +1,7 @@
 
-#include <iostream>
 #include <functional>
 #include <cnge8/scene/sceneManager.h>
 
-#include "cnge8/engine/window.h"
-#include "cnge8/engine/loop/loop.h"
 #include "cnge8/audio/audioDevice.h"
 
 #include "gameResources.h"

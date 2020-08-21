@@ -4,7 +4,7 @@
 #include "transform.h"
 
 #include "../types.h"
-#include "../math/Matrix4.h"
+#include "../math/matrix4.h"
 
 namespace CNGE {
 	class Camera {

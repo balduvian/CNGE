@@ -3,7 +3,7 @@
 
 #include "../load/resource.h"
 
-#include "SceneManager.h"
+#include "sceneManager.h"
 
 namespace CNGE {
 	SceneManager::SceneManager()

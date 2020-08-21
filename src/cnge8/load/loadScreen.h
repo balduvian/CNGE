@@ -14,6 +14,8 @@ namespace CNGE {
 		virtual void update(Input*, Timing*) = 0;
 
 		virtual void render(Resource*, i32, i32) = 0;
+
+		virtual ~LoadScreen() = default;
 	};
 }
 

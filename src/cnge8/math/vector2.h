@@ -58,10 +58,10 @@ class Vector<4, T>;
 #include <ostream>
 #include <cmath>
 
-#include "Vector.h"
-#include "Vector3.h"
-#include "Vector4.h"
-#include "VectorDimensions.h"
+#include "vector.h"
+#include "vector3.h"
+#include "vector4.h"
+#include "vectorDimensions.h"
 
 namespace VectorDimensions {
 	extern VectorDimension<0> x;

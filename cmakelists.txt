@@ -10,6 +10,8 @@ file(GLOB_RECURSE SOURCES
 	src/*.cpp
 )
 
+file(COPY ./res DESTINATION ./)
+
 add_executable(CNGE_8_2 ${SOURCE_FILES} ${SOURCES} src/cnge8/load/loadError.h src/cnge8/load/loadError.cpp)
 
 include_directories(C:/Users/Emmet/Programming/lib/libpng-1.6.0/include)

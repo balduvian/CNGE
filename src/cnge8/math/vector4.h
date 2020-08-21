@@ -56,10 +56,10 @@ class Vector<3, T>;
 #include <ostream>
 #include <cmath>
 
-#include "Vector.h"
-#include "Vector2.h"
-#include "Vector3.h"
-#include "VectorDimensions.h"
+#include "vector.h"
+#include "vector2.h"
+#include "vector3.h"
+#include "vectorDimensions.h"
 
 namespace VectorDimensions {
 	extern VectorDimension<3> w;

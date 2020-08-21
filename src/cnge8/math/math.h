@@ -5,7 +5,8 @@
 #include "../types.h"
 
 namespace CNGE {
-	constexpr float PI = 3.14159265359;
+	template<typename  T>
+	constexpr T PI = 3.1415926535897932384626433832795028841971693993751058209749445923078164;
 
 	template<typename T>
 	T mod(T a, T b) {

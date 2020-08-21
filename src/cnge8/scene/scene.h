@@ -26,14 +26,16 @@ namespace CNGE {
         virtual auto render() -> void = 0;
 
 		struct SceneSwitchReturn {
-			std::unique_ptr<Scene>&& scene;
-			std::unique_ptr<LoadScreen>&& loadScreen;
+			std::unique_ptr<Scene> scene;
+			std::unique_ptr<LoadScreen> loadScreen;
 		};
 
 		static auto dontSwitch() -> SceneSwitchReturn;
         virtual auto switchScene() -> SceneSwitchReturn = 0;
 
         auto getBundle() -> ResourceBundle*;
+
+		virtual ~Scene() = default;
 	};
 }
 
