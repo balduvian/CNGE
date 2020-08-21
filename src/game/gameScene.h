@@ -26,6 +26,8 @@ namespace Game {
 		auto update(CNGE::Input*, CNGE::Timing*) -> void override;
 
 		auto render() -> void override;
+
+		auto switchScene() -> SceneSwitchReturn override;
 	};
 }
 

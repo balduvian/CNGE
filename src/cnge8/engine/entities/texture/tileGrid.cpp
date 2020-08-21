@@ -8,7 +8,7 @@ namespace CNGE {
 	TileGrid::TileGrid(const char* path, u32 tilesWide, TextureParams params)
 	: Texture(path, params), tilesWide(tilesWide), tilesTall(1), widthFraction(), heightFraction() {}
 
-	auto TileGrid::customProcess() -> bool {
+	auto TileGrid::customProcess() -> LoadError {
 		auto result = Texture::customProcess();
 
 		widthFraction = 1._f32 / tilesWide;

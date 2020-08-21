@@ -7,8 +7,8 @@
 #include <memory>
 #include <vector>
 
-#include "../types.h"
-#include "../load/resource.h"
+#include "cnge8/types.h"
+#include "cnge8/load/resource.h"
 
 namespace CNGE
 {
@@ -42,11 +42,8 @@ namespace CNGE
 		auto render() -> void;
 		
 	protected:
-		auto customGather() -> bool;
-		auto customDiscard() -> bool;
-
-		auto customProcess() -> bool;
-		auto customUnload() -> bool;
+		auto customProcess() -> LoadError override;
+		auto customUnload() -> LoadError override;
 
 	private:
 		GLuint vao;

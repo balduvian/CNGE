@@ -2,7 +2,7 @@
 #ifndef CNGE_TEXTURE_PARAMS
 #define CNGE_TEXTURE_PARAMS
 
-#include "../../types.h"
+#include "cnge8/types.h"
 
 namespace CNGE {
 	class TextureParams {

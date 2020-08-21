@@ -18,10 +18,7 @@ namespace CNGE {
 		std::unique_ptr<LoadScreen> loadScreen;
 
 	protected:
-		struct SceneSwitchReturn {
-			std::unique_ptr<Scene>&& scene;
-			std::unique_ptr<LoadScreen>&& loadScreen;
-		};
+
 
 	public:
 		SceneManager();
@@ -33,8 +30,6 @@ namespace CNGE {
 		auto updateScene(Input*, Timing*) -> bool;
 
 		auto update(Input*, Timing*) -> void;
-
-        virtual auto onSceneSwitch(i32) -> SceneSwitchReturn = 0;
 	};
 
 }

@@ -2,7 +2,7 @@
 #ifndef GAME_GAME_RESOURCES
 #define GAME_GAME_RESOURCES
 
-#include "cnge8/engine/texture/texture.h"
+#include "cnge8/engine/entities/texture/texture.h"
 #include "cnge8/load/resourceBundle.h"
 #include "cnge8/audio/sound.h"
 

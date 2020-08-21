@@ -15,18 +15,21 @@ namespace CNGE {
 		horzWrap(params.horzWrap), vertWrap(params.vertWrap),
 		minFilter(params.minFilter), magFilter(params.magFilter) {}
 
-	auto Texture::customGather() -> bool {
+	auto Texture::customGather() -> LoadError {
 		auto filename = std::filesystem::path(assetPath);
 
 		assetImage = std::move(Image::fromPNG(filename));
 
+		if (!assetImage.isValid())
+			return LoadError(std::string("image file ") + assetPath + " could not be loaded");
+
 		width = assetImage.getWidth();
 		height = assetImage.getHeight();
 
-		return true;
+		return LoadError::none();
 	}
 
-	auto Texture::customProcess() -> bool {
+	auto Texture::customProcess() -> LoadError {
 		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
 
 		bind();
@@ -38,17 +41,17 @@ namespace CNGE {
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, assetImage.getPixels());
 
-		return true;
+		return LoadError::none();
 	}
 
-	auto Texture::customDiscard() -> bool {
+	auto Texture::customDiscard() -> LoadError {
 		assetImage.invalidate();
-		return true;
+		return LoadError::none();
 	}
 
-	auto Texture::customUnload() -> bool {
+	auto Texture::customUnload() -> LoadError {
 		glDeleteTextures(1, &texture);
-		return true;
+		return LoadError::none();
 	}
 
 	/* use */
@@ -63,6 +66,6 @@ namespace CNGE {
 	}
 
 	Texture::~Texture() {
-		unload();
+		destroy();
 	}
 }

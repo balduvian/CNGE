@@ -10,7 +10,7 @@ file(GLOB_RECURSE SOURCES
 	src/*.cpp
 )
 
-add_executable(CNGE_8_2 ${SOURCE_FILES} ${SOURCES})
+add_executable(CNGE_8_2 ${SOURCE_FILES} ${SOURCES} src/cnge8/load/loadError.h src/cnge8/load/loadError.cpp)
 
 include_directories(C:/Users/Emmet/Programming/lib/libpng-1.6.0/include)
 include_directories(C:/Users/Emmet/Programming/lib/libjpeg)
@@ -25,3 +25,4 @@ target_link_libraries(CNGE_8_2 C:/Users/Emmet/Programming/lib/libjpeg/build/Rele
 target_link_libraries(CNGE_8_2 C:/Users/Emmet/Programming/lib/glew-2.1.0/lib/Release/x64/glew32s.lib)
 target_link_libraries(CNGE_8_2 C:/Users/Emmet/Programming/lib/glfw-3.2.2/lib/glfw3.lib)
 target_link_libraries(CNGE_8_2 "C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win64/OpenAL32.lib")
+target_link_libraries(CNGE_8_2 opengl32.lib)

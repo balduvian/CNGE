@@ -39,10 +39,7 @@ namespace CNGE {
 		vao(0)
 	{}
 
-	auto VAO::customGather() -> bool { return true; }
-	auto VAO::customDiscard() -> bool { return true; }
-
-	auto VAO::customProcess() -> bool {
+	auto VAO::customProcess() -> LoadError {
 		// create this vao
 		glCreateVertexArrays(1, &vao);
 		glBindVertexArray(vao);
@@ -62,10 +59,10 @@ namespace CNGE {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(int), indices, GL_STATIC_DRAW);
 
-		return true;
+		return LoadError::none();
 	}
 
-	auto VAO::customUnload() -> bool {
+	auto VAO::customUnload() -> LoadError {
 		// delete all custom vertex attribute buffers
 		for (auto i = 0; i < attribCount; ++i)
 			attribs[i].deleteBuffers();
@@ -79,7 +76,7 @@ namespace CNGE {
 		// delete the whole thing
 		glDeleteVertexArrays(1, &vao);
 
-		return true;
+		return LoadError::none();
 	}
 	
 	VAO::~VAO() {

@@ -2,7 +2,7 @@
 #ifndef GAME_TEXTURE_SHADER
 #define GAME_TEXTURE_SHADER
 
-#include "../../cnge8/engine/shader.h"
+#include "cnge8/engine/entities/shader/shader.h"
 #include "../../cnge8/types.h"
 
 namespace Game {

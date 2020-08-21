@@ -38,4 +38,8 @@ namespace Game {
 		GameResources::colorShader.giveColor(invColor);
 		GameResources::rect.render();
 	}
+
+	auto GameScene::switchScene() -> SceneSwitchReturn {
+		return dontSwitch();
+	}
 }

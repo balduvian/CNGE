@@ -2,7 +2,7 @@
 #ifndef GAME_COLORSHADER
 #define GAME_COLORSHADER
 
-#include "../../cnge8/engine/shader.h"
+#include "cnge8/engine/entities/shader/shader.h"
 #include "../../cnge8/types.h"
 #include "../../cnge8/util/color.h"
 

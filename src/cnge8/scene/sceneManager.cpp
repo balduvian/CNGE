@@ -57,14 +57,11 @@ namespace CNGE {
 		scene->update(input, timing);
 		scene->render();
 
+		auto [returnedScene, returnedLoadScreen] = scene->switchScene();
+
 		// check if we need to switch scenes
-		if (scene->getSwitching()) {
-			auto [returnedScene, returnedLoadScreen] = onSceneSwitch(scene->getSwitchCode());
-
-			start(input, std::move(returnedScene), std::move(returnedLoadScreen));
-
-			return true;
-		}
+		if (returnedScene != nullptr)
+			return start(input, std::move(returnedScene), std::move(returnedLoadScreen)), true;
 
 		return false;
 	}

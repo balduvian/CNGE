@@ -6,6 +6,7 @@
 #include "../load/resource.h"
 #include "../engine/loop/loop.h"
 #include "../engine/window.h"
+#include "../load/loadScreen.h"
 #include "cnge8/load/resourceBundle.h"
 
 namespace CNGE {
@@ -13,27 +14,24 @@ namespace CNGE {
 	private:
         ResourceBundle* bundle;
 
-        bool switching;
-        i32 switchCode;
-
 	protected:
 		void switchScene(i32);
 
 	public:
         Scene(ResourceBundle* bundle);
 
-        virtual void start() = 0;
+        virtual auto start() -> void = 0;
+        virtual auto resized(u32, u32) -> void = 0;
+        virtual auto update(Input*, Timing*) -> void = 0;
+        virtual auto render() -> void = 0;
 
-        virtual void resized(u32 width, u32 height) = 0;
+		struct SceneSwitchReturn {
+			std::unique_ptr<Scene>&& scene;
+			std::unique_ptr<LoadScreen>&& loadScreen;
+		};
 
-        virtual void update(Input* input, Timing* time) = 0;
-
-        virtual void render() = 0;
-
-        /// scene switching ///
-
-		bool getSwitching();
-        int getSwitchCode();
+		static auto dontSwitch() -> SceneSwitchReturn;
+        virtual auto switchScene() -> SceneSwitchReturn = 0;
 
         auto getBundle() -> ResourceBundle*;
 	};

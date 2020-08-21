@@ -1,13 +1,13 @@
 
 #include <iostream>
 #include <functional>
+#include <cnge8/scene/sceneManager.h>
 
 #include "cnge8/engine/window.h"
 #include "cnge8/engine/loop/loop.h"
 #include "cnge8/audio/audioDevice.h"
 
 #include "gameResources.h"
-#include "gameSceneManager.h"
 #include "gameScene.h"
 #include "gameLoadScreen.h"
 
@@ -30,7 +30,7 @@ auto main(int argc, char** argv) -> int {
 	// get load screen ready
 	Game::GameResources::loadScreenResources.setup().quickUpdateLoad(true);
 
-	auto sceneManager = Game::GameSceneManager();
+	auto sceneManager = CNGE::SceneManager();
 
 	sceneManager.start(window.getInput(), std::make_unique<Game::GameScene>(), std::make_unique<Game::GameLoadScreen>());
 

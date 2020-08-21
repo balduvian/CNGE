@@ -1,5 +1,5 @@
 
-#include "../../cnge8/engine/texture/texture.h"
+#include "cnge8/engine/entities/texture/texture.h"
 #include "textureShader.h"
 
 namespace Game {

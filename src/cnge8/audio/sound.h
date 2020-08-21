@@ -18,18 +18,18 @@ namespace CNGE {
 	public:
 		Sound(const char*);
 		
-		void play();
-		void pause();
-		void stop();
+		auto play() -> void;
+		auto pause() -> void;
+		auto stop() -> void;
 		
-		void loop(bool = true);
+		auto loop(bool = true) -> void;
 		
-		auto customGather() -> bool override;
-		auto customProcess() -> bool override;
-		auto customDiscard() -> bool override;
-		auto customUnload() -> bool override;
+		auto customGather() -> LoadError override;
+		auto customProcess() -> LoadError override;
+		auto customDiscard() -> LoadError override;
+		auto customUnload() -> LoadError override;
 
-		auto setVolume(f32);
+		auto setVolume(f32) -> void;
 
 		~Sound(); 
 	};

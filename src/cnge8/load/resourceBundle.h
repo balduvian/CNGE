@@ -5,23 +5,27 @@
 #include <initializer_list>
 #include <vector>
 
+#include "loadError.h"
 #include "resource.h"
 
 namespace CNGE {
 	class ResourceBundle {
 	private:
+		static auto errorExit(LoadError&) -> void;
+		auto getAlong(Resource*) -> i32;
+
 		/// stores the pointers to resources to load/unload ///
 		std::vector<Resource*> resources;
 		std::vector<Resource*>::iterator resourcesIter;
 
-		auto  doGather(Resource*       ) -> bool;
-		auto  doGather(Resource*, bool&) -> bool;
-		auto doProcess(Resource*       ) -> bool;
-		auto doProcess(Resource*, bool&) -> bool;
-		auto  doUnload(Resource*       ) -> bool;
-		auto  doUnload(Resource*, bool&) -> bool;
-		auto doDiscard(Resource*       ) -> bool;
-		auto doDiscard(Resource*, bool&) -> bool;
+		auto  doGather(Resource*,        LoadError&) -> bool;
+		auto  doGather(Resource*, bool&, LoadError&) -> bool;
+		auto doProcess(Resource*,        LoadError&) -> bool;
+		auto doProcess(Resource*, bool&, LoadError&) -> bool;
+		auto  doUnload(Resource*,        LoadError&) -> bool;
+		auto  doUnload(Resource*, bool&, LoadError&) -> bool;
+		auto doDiscard(Resource*,        LoadError&) -> bool;
+		auto doDiscard(Resource*, bool&, LoadError&) -> bool;
 
 	public:
 		/// constructing using a static initializer list ///
@@ -35,12 +39,12 @@ namespace CNGE {
 		auto setup() -> ResourceBundle&;
 
 		/// loading that blocks the thread ///
-		auto quickUpdateLoad(bool) -> bool;
-		auto quickUpdateUnload(bool) -> bool;
+		auto quickUpdateLoad(bool) -> void;
+		auto quickUpdateUnload(bool) -> void;
 
 		/// call every frame to do multithreaded loading ///
-		auto updateLoad(bool) -> bool;
-		auto updateUnload(bool) -> bool;
+		auto updateLoad(bool) -> void;
+		auto updateUnload(bool) -> void;
 
 		/// getters ///
 		auto getCurrent() -> Resource*;

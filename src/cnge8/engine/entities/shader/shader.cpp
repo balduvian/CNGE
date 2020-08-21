@@ -5,7 +5,7 @@
 
 #include "shader.h"
 
-#include "transform.h"
+#include "cnge8/engine/transform.h"
 
 namespace CNGE {
 
@@ -13,35 +13,38 @@ namespace CNGE {
 	Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	: Resource(true), program(), vertexPath(vertexPath), fragmentPath(fragmentPath), vertexData(nullptr), fragmentData(nullptr), modelLocation(), projviewLocation() {}
 
-	auto Shader::customGather() -> bool {
-		auto readFile = [](const char* path, bool& err) -> char* {
+	auto Shader::customGather() -> LoadError {
+		auto readFile = [](const char* path, LoadError& error) -> char* {
 			auto filePath = std::filesystem::path(path);
-			if (!std::filesystem::exists(filePath)) return (err = true), nullptr;
+			if (!std::filesystem::exists(filePath))
+				return error.makeErr(std::string("source file ") + path + " does not exist"), nullptr;
 
 			/* extra byte for null terminator */
 			auto size = std::filesystem::file_size(filePath) + 1_u32;
 			auto buffer = new char[size];
 
 			auto stream = std::ifstream(filePath, std::ios::binary);
-			if (stream.bad()) return (err = true), nullptr;
+			if (stream.bad())
+				return error.makeErr(std::string("error encountered while reading source file ") + path), nullptr;
 
 			stream.read(buffer, size - 1);
-			if (stream.bad()) return (err = true), nullptr;
+			if (stream.bad())
+				return error.makeErr(std::string("error encountered while reading source file ") + path), nullptr;
 
 			buffer[size - 1] = '\0';
 
 			return buffer;
 		};
 
-		auto err = false;
+		auto error = LoadError::none();
 
-		vertexData = readFile(vertexPath, err);
-		fragmentData = readFile(fragmentPath, err);
+		vertexData = readFile(vertexPath, error);
+		fragmentData = readFile(fragmentPath, error);
 
-		return err;
+		return error;
 	}
 
-	auto Shader::customProcess() -> bool {
+	auto Shader::customProcess() -> LoadError {
 		auto loadShader = [](char* data, int type) -> u32 {
 			auto shader = glCreateShader(type);
 
@@ -84,20 +87,20 @@ namespace CNGE {
 		// now load custom uniforms
 		getUniforms();
 
-		return true;
+		return LoadError::none();
 	}
 
-	auto Shader::customUnload() -> bool {
+	auto Shader::customUnload() -> LoadError {
 		glDeleteProgram(program);
 
-		return true;
+		return LoadError::none();
 	}
 
-	auto Shader::customDiscard() -> bool {
+	auto Shader::customDiscard() -> LoadError {
 		delete[] vertexData;
 		delete[] fragmentData;
 
-		return true;
+		return LoadError::none();
 	}
 
 	auto Shader::printShaderError(GLuint shader) -> void {

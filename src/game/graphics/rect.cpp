@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 
 #include "rect.h"
-#include "../../cnge8/types.h"
+#include "cnge8/types.h"
 
 namespace Game {
 	Rect::Rect() : VAO(

@@ -6,7 +6,9 @@
 #include <chrono>
 #include <atomic>
 #include <mutex>
+
 #include "../types.h"
+#include "loadError.h"
 
 namespace CNGE {
 	class Resource {
@@ -31,38 +33,33 @@ namespace CNGE {
 		bool hasGather;
 
 	protected:
-		virtual auto customGather() -> bool = 0; // Gather the required resources from disk
-		virtual auto customDiscard() -> bool = 0; // Discard the data from disk once it's been processed or if the resource is to be unloaded
+		virtual auto customGather() -> LoadError; // Gather the required resources from disk
+		virtual auto customDiscard() -> LoadError; // Discard the data from disk once it's been processed or if the resource is to be unloaded
 
-		virtual auto customProcess() -> bool = 0; // Process the data retrieved from disk (e.g. sending to gpu)
-		virtual auto customUnload() -> bool = 0; // Unload the resource
+		virtual auto customProcess() -> LoadError = 0; // Process the data retrieved from disk (e.g. sending to gpu)
+		virtual auto customUnload() -> LoadError = 0; // Unload the resource
 
 		auto destroy() -> void;
 
 	public:
 		Resource(bool hasGather);
 
-		auto joinThread() -> bool;
+		auto joinThread() -> void;
 
 		auto needsGather() -> bool;
 		auto isGathering() -> bool;
 		auto finishedGathering() -> bool;
-		auto gather() -> void;
-		auto quickGather() -> bool;
+		auto gather(LoadError&) -> void;
+		auto quickGather(LoadError&) -> void;
 
 		auto needsDiscard() -> bool;
-		auto discard() -> bool;
+		auto discard(LoadError&) -> void;
 
 		auto needsProcess() -> bool;
-		auto process() -> bool;
+		auto process(LoadError&) -> void;
 
 		auto needsUnload() -> bool;
-		auto unload() -> bool;
-
-		auto getGatherStatus() const -> GatherStatus;
-		auto getProcessStatus() const -> ProcessStatus;
-
-		auto getHasGather() -> bool;
+		auto unload(LoadError&) -> void;
 	};
 }
 

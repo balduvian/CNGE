@@ -2,10 +2,10 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <GL/GL.h>
+#include <gl/GL.h>
 
-#include "../types.h"
-#include "../load/resource.h"
+#include "cnge8/types.h"
+#include "cnge8/load/resource.h"
 
 namespace CNGE {
 	class Shader : public Resource {
@@ -48,10 +48,10 @@ namespace CNGE {
 		char* vertexData;
 		char* fragmentData;
 
-		virtual auto customGather() -> bool;
-		virtual auto customProcess() -> bool;
-		virtual auto customDiscard() -> bool;
-		virtual auto customUnload() -> bool;
+		auto customGather() -> LoadError override;
+		auto customProcess() -> LoadError override;
+		auto customDiscard() -> LoadError override;
+		auto customUnload() -> LoadError override;
 
 		static auto printShaderError(GLuint) -> void;
 

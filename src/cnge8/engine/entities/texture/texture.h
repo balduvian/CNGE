@@ -2,9 +2,9 @@
 #ifndef CNGE_TEXTURE
 #define CNGE_TEXTURE
 
-#include "../../types.h"
-#include "../../image/image.h"
-#include "../../load/resource.h"
+#include "cnge8/types.h"
+#include "cnge8/image/image.h"
+#include "cnge8/load/resource.h"
 #include "textureParams.h"
 
 namespace CNGE {
@@ -22,10 +22,10 @@ namespace CNGE {
 	protected:
 		static float tileValues[4];
 
-		virtual auto  customGather() -> bool override;
-		virtual auto customProcess() -> bool override;
-		virtual auto customDiscard() -> bool override;
-		virtual auto  customUnload() -> bool override;
+		virtual auto  customGather() -> LoadError override;
+		virtual auto customProcess() -> LoadError override;
+		virtual auto customDiscard() -> LoadError override;
+		virtual auto  customUnload() -> LoadError override;
 
 		u32 width;
 		u32 height;

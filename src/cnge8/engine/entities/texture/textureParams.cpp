@@ -1,5 +1,5 @@
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 #include "textureParams.h"
 

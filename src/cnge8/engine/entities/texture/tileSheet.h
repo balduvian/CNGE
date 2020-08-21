@@ -4,7 +4,7 @@
 
 #include "texture.h"
 
-#include "../../types.h"
+#include "cnge8/types.h"
 
 namespace CNGE {
 	class TileSheet : public Texture {
@@ -12,13 +12,13 @@ namespace CNGE {
 		u32 numPositions;
 		const i32* inputPositions;
 
-		f32* calculatedPositions[4];
+		f32* calculatedPositions;
 
 	public:
 		TileSheet(const char*, const u32, const i32*, TextureParams = TextureParams());
 
-		auto customProcess() -> bool override;
-		auto customUnload() -> bool override;
+		auto customProcess() -> LoadError override;
+		auto customUnload() -> LoadError override;
 
 		f32* getSheet(u32);
 

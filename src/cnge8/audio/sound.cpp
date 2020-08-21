@@ -9,13 +9,16 @@ namespace CNGE {
 	Sound::Sound(const char* wavFilePath)
 		: Resource(true), wavFilePath(wavFilePath), wav(), source() {}
 
-	auto Sound::customGather() -> bool {
+	auto Sound::customGather() -> LoadError {
 		wav = std::make_unique<Wav>(wavFilePath);
 
-		return !wav->getErr();
+		if (wav->getErr())
+			return LoadError(std::string("wav file ") + wavFilePath + " could not be read");
+
+		return LoadError::none();
 	}
 
-	auto Sound::customProcess() -> bool {
+	auto Sound::customProcess() -> LoadError {
 		auto buffer = AudioBuffer(wav.get());
 
 		alGenSources(1, &source);
@@ -24,38 +27,36 @@ namespace CNGE {
 		alSource3f(source, AL_DIRECTION, 0, 0, 0);
 		alSourcei(source, AL_BUFFER, buffer.getBuffer());
 
-		return true;
+		return LoadError::none();
 	}
 
-	auto Sound::customUnload() -> bool {
+	auto Sound::customUnload() -> LoadError {
 		alDeleteSources(1, &source);
-
-		return true;
+		return LoadError::none();
 	}
 
-	auto Sound::customDiscard() -> bool {
+	auto Sound::customDiscard() -> LoadError {
 		wav = nullptr;
-
-		return true;
+		return LoadError::none();
 	}
 
-	void Sound::play() {
+	auto Sound::play() -> void {
 		alSourcePlay(source);
 	}
 
-	void Sound::stop() {
+	auto Sound::stop() -> void {
 		alSourceStop(source);
 	}
 
-	void Sound::pause() {
+	auto Sound::pause() -> void {
 		alSourcePause(source);
 	}
 
-	void Sound::loop(bool loop) {
+	auto Sound::loop(bool loop) -> void {
 		alSourcei(source, AL_LOOPING, loop);
 	}
 
-	auto Sound::setVolume(f32 volume) {
+	auto Sound::setVolume(f32 volume) -> void {
 		alSourcef(source, AL_GAIN, volume);
 	}
 
