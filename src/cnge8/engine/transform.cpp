@@ -14,52 +14,65 @@ namespace CNGE {
 	};
 
 	float Transform::defaultProjview[16] {
-		2, 0, 0, 0,
-		0, 2, 0, 0,
-		0, 0, 1, 0,
+		 2,  0, 0, 0,
+		 0,  2, 0, 0,
+		 0,  0, 1, 0,
 		-1, -1, 0, 1
 	};
 
-	/// default initialization
-	Transform::Transform() : translation(0.f, 0.f), scale(1.f, 1.f), rotation(0) {}
+	Transform::Transform()
+		: x(0), y(0), scaleX(1), scaleY(1), rotation(0) {}
 
-	/// modifes a mat4 based on values passed in
-	void Transform::transform(Matrix4f& mat, f32 x, f32 y, f32 rotation, f32 width, f32 height) {
-		mat.setTranslate2D(x, y).rotate2D(rotation).scale2D(width, height);
+	Transform::Transform(f32 x, f32 y, f32 scaleX, f32 scaleY, f32 rotation)
+		: x(x), y(y), scaleX(scaleX), scaleY(scaleY), rotation(rotation) {}
+
+	/* modifying a matrix */
+
+	auto Transform::transform(Matrix4f& mat, f32 x, f32 y, f32 width, f32 height) -> float* {
+		return mat.setTranslate2D(x, y).scale2D(width, height).m;
 	}
 
-	void Transform::transform(Matrix4f& mat, f32 x, f32 y, f32 z, f32 rotation, f32 width, f32 height) {
-		mat.setTranslate(x, y, z).rotate2D(rotation).scale2D(width, height);
+	auto Transform::transform(Matrix4f& mat, f32 x, f32 y, f32 width, f32 height, f32 rotation) -> float* {
+		return mat.setTranslate2D(x, y).rotate2D(rotation).scale2D(width, height).m;
 	}
 
-	/// returns the float values for a model matrix based on this transform
-	float* Transform::toModel() {
-		transform(matrix);
-
-		return matrix.m;
+	auto Transform::transformCenterRotate(Matrix4f& mat, f32 x, f32 y, f32 width, f32 height, f32 rotation) -> float * {
+		return mat.setTranslate2D(x + width / 2, y + height / 2).rotate2D(rotation).translate2D(-width / 2, -height / 2).scale2D(width, height).m;
 	}
 
-	float* Transform::toZModel(f32 z) {
-		transform(matrix, translation.x(), translation.y(), z, rotation, scale.x(), scale.y());
-
-		return matrix.m;
+	auto Transform::transform(Matrix4f& mat, f32 x, f32 y, f32 z, f32 width, f32 height, f32 rotation) -> float* {
+		return mat.setTranslate(x, y, z).rotate2D(rotation).scale2D(width, height).m;
 	}
 
-	/// returns the float values for a model matrix based on given params
-	/// no instance of a transform needed
-	float* Transform::toModel(f32 x, f32 y, f32 rotation, f32 width, f32 height) {
-		transform(matrix, x, y, rotation, width, height);
-
-		return matrix.m;
+	auto Transform::transform(Matrix4f& mat) -> float* {
+		return transform(mat, x, y, scaleX, scaleY, rotation);
 	}
 
-	/// modifies a mat4 based on this transform
-	void Transform::transform(Matrix4f& mat) {
-		transform(mat, translation.x(), translation.y(), rotation, scale.x(), scale.y());
+	auto Transform::cameraTransform(Matrix4f& mat) -> float* {
+		return mat.setScale2D(scaleX, scaleY).rotate2D(-rotation).translate2D(-x, -y).m;
 	}
 
-	/// modify this matrix for the camera, everything is in reverse order and negative
-	void Transform::cameraTransform(Matrix4f& mat) {
-		mat.setScale2D(scale).rotate2D(-rotation).translate2D(-translation);
+	auto Transform::toModel() -> float* {
+		return transform(matrix);
+	}
+
+	auto Transform::toModel(f32 z) -> float* {
+		return transform(matrix, x, y, z, scaleX, scaleY, rotation);
+	}
+
+	auto Transform::toModel(f32 x, f32 y, f32 width, f32 height) -> float* {
+		return transform(matrix, x, y, width, height);
+	}
+
+	auto Transform::toModel(f32 x, f32 y, f32 width, f32 height, f32 rotation) -> float* {
+		return transform(matrix, x, y, width, height, rotation);
+	}
+
+	auto Transform::toModelCenterRotate(f32 x, f32 y, f32 width, f32 height, f32 rotation) -> float* {
+		return transformCenterRotate(matrix, x, y, width, height, rotation);
+	}
+
+	auto Transform::toModel(f32 x, f32 y, f32 z, f32 width, f32 height, f32 rotation) -> float* {
+		return transform(matrix, x, y, z, width, height, rotation);
 	}
 }

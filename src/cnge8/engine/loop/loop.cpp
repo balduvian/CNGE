@@ -39,7 +39,7 @@ namespace CNGE {
 		/* calculate how long this frame took */
 		const auto delta = now - last;
 
-		if (!sanic)
+		if (!sanic) {
 			if (delta.count() < frameTime(fps) * 2_i64) {
 				/* no lag happened, frames as usual */
 				next = last + nanos(frameTime(fps) * 2);
@@ -49,6 +49,9 @@ namespace CNGE {
 				next = now + nanos(frameTime(fps));
 				last = now;
 			}
+		} else {
+			last = now;
+		}
 
 		/* record how long this frame took */
 		*frameIter = delta;

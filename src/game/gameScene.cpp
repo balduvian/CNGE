@@ -4,6 +4,7 @@
 #include "cnge8/math/math.h"
 #include "cnge8/engine/transform.h"
 #include "gameResources.h"
+#include "cnge8/math/math.h"
 
 #include <iostream>
 
@@ -24,6 +25,8 @@ namespace Game {
 	}
 
 	auto GameScene::update(CNGE::Input* input, CNGE::Timing* timing) -> void {
+		angle += CNGE::PI<f32> * timing->time;
+
 		camera.update();
 	}
 
@@ -34,7 +37,7 @@ namespace Game {
 
 		auto invColor = skekColor.invert();
 
-		GameResources::colorShader.enable(CNGE::Transform::toModel(0, 0, 0.45, 1, 1), camera.getProjview());
+		GameResources::colorShader.enable(CNGE::Transform::toModelCenterRotate(2, 2, 1, 1, angle), camera.getProjview());
 		GameResources::colorShader.giveColor(invColor);
 		GameResources::rect.render();
 	}

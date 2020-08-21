@@ -11,6 +11,7 @@
 namespace Game {
 	class GameScene : public CNGE::Scene {
 	private:
+		f32 angle = 0;
 		const static CNGE::Color skekColor;
 
 		CNGE::Camera camera;

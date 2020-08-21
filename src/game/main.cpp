@@ -11,7 +11,7 @@
 auto main(int argc, char** argv) -> int {
 	/* init glfw and opengl */
 	CNGE::Window::init();
-	auto window = CNGE::Window(3, 3, true, true, "CNGE Test Demo", CNGE::Window::getPrimaryMonitor(), false, true);
+	auto window = CNGE::Window(4, 6, true, true, "CNGE Test Demo", CNGE::Window::getPrimaryMonitor(), false, true);
 	CNGE::Window::wrangle();
 
 	/* init openal */

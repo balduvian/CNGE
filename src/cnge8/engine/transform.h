@@ -13,34 +13,26 @@ namespace CNGE {
 		static float defaultModel[16];
 		static float defaultProjview[16];
 
-		Vector2f translation;
-		Vector2f scale;
-		float rotation;
+		f32 x, y, scaleX, scaleY, rotation;
 
-		/// default initialization
 		Transform();
+		Transform(f32, f32, f32, f32, f32);
 
-		/// modifes a mat4 based on values passed in
-		static void transform(Matrix4f&, f32 x, f32 y, f32 rotation, f32 width, f32 height);
-		static void transform(Matrix4f&, f32 x, f32 y, f32 z, f32 rotation, f32 width, f32 height);
+		static auto transform(Matrix4f&, f32, f32, f32, f32) -> float*;
+		static auto transform(Matrix4f&, f32, f32, f32, f32, f32) -> float*;
+		static auto transformCenterRotate(Matrix4f&, f32, f32, f32, f32, f32) -> float*;
+		static auto transform(Matrix4f&, f32, f32, f32, f32, f32, f32) -> float*;
+		auto transform(Matrix4f&) -> float*;
+		auto cameraTransform(Matrix4f&) -> float*;
 
-		/// returns the float values for a model matrix based on this transform
-		float* toModel();
-		/// return the float values for a model matrix that also has a depth
-		float* toZModel(f32 z);
-
-		/// returns the float values for a model matrix based on given params
-		/// no instance of a transform needed
-		static float* toModel(f32 x, f32 y, f32 rotation, f32 width, f32 height);
-
-		/// modifies a mat4 based on this transform's internal values
-		void transform(Matrix4f&);
-
-		/// modify this matrix for the camera, everything is in reverse order and negative
-		void cameraTransform(Matrix4f&);
+		auto toModel() -> float*;
+		auto toModel(f32 z) -> float*;
+		static auto toModel(f32, f32, f32, f32) -> float*;
+		static auto toModel(f32, f32, f32, f32, f32) -> float*;
+		static auto toModelCenterRotate(f32, f32, f32, f32, f32) -> float*;
+		static auto toModel(f32, f32, f32, f32, f32, f32) -> float*;
 
 	private:
-		/// used for generating values
 		static Matrix4f matrix;
 	};
 }
