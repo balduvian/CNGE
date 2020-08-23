@@ -12,7 +12,7 @@ file(GLOB_RECURSE SOURCES
 
 file(COPY ./res DESTINATION ./)
 
-add_executable(CNGE_8_2 ${SOURCE_FILES} ${SOURCES} src/cnge8/load/loadError.h src/cnge8/load/loadError.cpp src/game/tetris/tetrisBoard.cpp src/game/tetris/tetrisBoard.h src/game/tetris/rotation.h src/game/tetris/rotation.cpp src/game/tetris/piece.h src/game/tetris/piece.cpp src/cnge8/util/timer.h src/cnge8/util/timer.cpp)
+add_executable(CNGE_8_2 ${SOURCE_FILES} ${SOURCES} src/cnge8/load/loadError.h src/cnge8/load/loadError.cpp src/game/tetris/tetrisBoard.cpp src/game/tetris/tetrisBoard.h src/game/tetris/rotation.h src/game/tetris/rotation.cpp src/game/tetris/piece.h src/game/tetris/piece.cpp src/cnge8/util/timer.h src/cnge8/util/timer.cpp src/game/tetris/pieceList.h src/game/tetris/piceList.cpp src/game/tetris/animation.h src/game/tetris/animation.cpp src/game/tetris/destroyParticle.h src/game/tetris/destroyParticle.cpp src/game/tetris/vector.h src/game/tetris/vector.cpp)
 
 include_directories(C:/Users/Emmet/Programming/lib/libpng-1.6.0/include)
 include_directories(C:/Users/Emmet/Programming/lib/libjpeg)

@@ -6,8 +6,8 @@
 namespace CNGE {
 	Input::Input(): keysPressed(), mousePressed(), cursorX(), cursorY(), width(), height(), resized(), scrollX(), scrollY() {}
 
-	u32 Input::getKeyPressed(i32 key) {
-		return keysPressed[key];
+	auto Input::getKeyPressed(i32 key) -> bool {
+		return keysPressed[key] == BUTTON_PRESSED;
 	}
 
 	bool Input::getKeyDown(i32 key) {

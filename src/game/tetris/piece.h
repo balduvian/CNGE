@@ -36,6 +36,7 @@ namespace Game {
 		auto getY() -> i32;
 		auto setX(i32) -> void;
 		auto setY(i32) -> void;
+		auto setXY(i32, i32) -> void;
 		auto moveX(i32) -> void;
 		auto moveY(i32) -> void;
 

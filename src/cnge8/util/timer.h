@@ -14,7 +14,7 @@ namespace CNGE {
 		bool going;
 
 	public:
-		Timer(f64);
+		Timer(f64, bool = false);
 
 		auto start() -> void;
 		auto pause() -> void;

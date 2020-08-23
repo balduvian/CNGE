@@ -77,6 +77,11 @@ namespace Game {
 		this->y = y;
 	}
 
+	auto Piece::setXY(i32 x, i32 y) -> void {
+		this->x = x;
+		this->y = y;
+	}
+
 	auto Piece::moveX(i32 offset) -> void {
 		x += offset;
 	}

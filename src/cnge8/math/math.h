@@ -30,6 +30,11 @@ namespace CNGE {
 	}
 
 	template<typename T>
+	auto interpSquared(T start, T end, T along) -> T {
+		return (end - start) * (along * along) + start;
+	}
+
+	template<typename T>
 	auto invInterp(T start, T end, T value) -> T {
 		return (value - start) / (end - start);
 	}

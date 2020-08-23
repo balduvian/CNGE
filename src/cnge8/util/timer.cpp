@@ -6,7 +6,7 @@
 #include "../math/math.h"
 
 namespace CNGE {
-	Timer::Timer(f64 time) : timer(0), time(time), going(false) {}
+	Timer::Timer(f64 time, bool startState) : timer(0), time(time), going(startState) {}
 
 	auto Timer::start() -> void {
 		going = true;

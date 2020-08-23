@@ -17,8 +17,8 @@ namespace CNGE {
 			BUTTON_HELD      = 0x03,
 			BUTTON_REPEAT    = 0x04;
 
-		u32 getKeyPressed(i32 key);
 		bool getKeyDown(i32 key);
+		bool getKeyPressed(i32 key);
 
 		f64 getCursorX();
 		f64 getCursorY();
