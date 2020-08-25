@@ -8,29 +8,35 @@
 #include <memory>
 #include <random>
 
-#include "piece.h"
+#include "pieceReference.h"
 
 namespace Game {
 	class PieceList {
 	private:
-		std::vector<Piece> referencePieces;
+		std::unique_ptr<PieceReference[]> referencePieces;
+		i32 numReferencePieces;
 
-		std::vector<Piece*> firstQueue;
-		std::vector<Piece*> nextQueue;
+		std::vector<PieceReference*> firstQueue;
+		std::vector<PieceReference*> nextQueue;
 
-		auto generateQueue(std::vector<Piece*>&) -> void;
+		auto generateQueue(std::vector<PieceReference*>&) -> void;
 
 		std::default_random_engine engine;
 		std::uniform_int_distribution<i32> dist;
 
 	public:
-		PieceList(std::initializer_list<Piece>&&);
+		PieceList(i32, PieceReference[]);
 
-		auto getPiece(i32) -> Piece*;
+		auto getPiece(i32) -> PieceReference*;
 
-		auto dequeue() -> Piece*;
+		auto dequeue(i32, i32) -> std::unique_ptr<Piece>;
 
 		auto reset() -> void;
+
+		auto size() -> i32;
+
+		auto begin() -> PieceReference*;
+		auto end() -> PieceReference*;
 	};
 }
 

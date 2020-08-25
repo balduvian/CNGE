@@ -43,6 +43,7 @@ namespace CNGE {
 
 	public:
 		Resource(bool hasGather);
+		~Resource();
 
 		auto joinThread() -> void;
 

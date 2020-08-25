@@ -165,5 +165,7 @@ namespace CNGE {
 		glUniformMatrix4fv(location, 1, false, values);
 	}
 
-	Shader::~Shader() {}
+	Shader::~Shader() {
+		destroy();
+	}
 }

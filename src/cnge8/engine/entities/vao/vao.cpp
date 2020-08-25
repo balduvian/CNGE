@@ -88,6 +88,8 @@ namespace CNGE {
 
 		// and the position attrib
 		delete[] vertexAttrib.data;
+
+		destroy();
 	}
 
 	/// actually draws this vao

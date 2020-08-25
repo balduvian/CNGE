@@ -16,8 +16,9 @@ namespace Game {
 		TetrisBoard(i32, i32);
 		~TetrisBoard();
 
-		auto set(i32 x, i32 y, i32 piece) -> void;
-		auto get(i32 x, i32 y) -> i32;
+		auto set(i32, i32, i32) -> void;
+		auto get(i32, i32) -> i32;
+		auto getCollision(i32, i32) -> bool;
 
 		auto getWidth() -> i32;
 		auto getHeight() -> i32;

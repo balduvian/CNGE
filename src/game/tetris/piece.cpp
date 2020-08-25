@@ -18,9 +18,6 @@ namespace Game {
 	Piece::Piece(i32 x, i32 y, i32 boundingSize, i32 *layout)
 		: x(x), y(y), boundingSize(boundingSize), layout(layout) {}
 
-	Piece::Piece(i32 boundingSize, i32 *layout)
-		: x(0), y(0), boundingSize(boundingSize), layout(layout) {}
-
 	Piece::Piece(const Piece &other)
 		: x(0), y(0), boundingSize(other.boundingSize), layout(copyLayout(boundingSize, other.layout)) {}
 
@@ -90,7 +87,7 @@ namespace Game {
 		y += offset;
 	}
 
-	auto Piece::rotate(std::function<i32(i32, i32, i32)> rotateFunction) -> i32* {
+	auto Piece::rotate(Rotation::RotateFunc rotateFunction) -> i32* {
 		auto ret = new i32[boundingSize * boundingSize];
 
 		for (auto y = 0; y < boundingSize; ++y) {

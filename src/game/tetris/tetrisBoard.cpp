@@ -20,6 +20,15 @@ namespace Game {
 		return board[y * width + x];
 	}
 
+	auto TetrisBoard::getCollision(i32 x, i32 y) -> bool {
+		if (x < 0) return true;
+		if (x >= width) return true;
+		if (y >= height) return false;
+		if (y < 0) return true;
+
+		return get(x, y);
+	}
+
 	auto TetrisBoard::getWidth() -> i32 {
 		return width;
 	}

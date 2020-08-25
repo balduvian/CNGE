@@ -17,56 +17,50 @@ namespace Game {
 		randomDevice(),
 		tickTimer(0.5),
         board(std::make_unique<TetrisBoard>(10, 20)),
-        pieceList(std::make_unique<PieceList>(std::initializer_list<Piece>{
-	          Piece(3, new i32[] {
-	              1, 0, 0,
-	              1, 1, 1,
-	              0, 0, 0
-	          }),
-	          Piece(3, new i32[] {
-	              0, 0, 2,
-	              2, 2, 2,
-	              0, 0, 0
-	          }),
-	          Piece(3, new i32[] {
-	              0, 0, 3,
-	              0, 3, 3,
-	              0, 3, 0
-	          }),
-	          Piece(3, new i32[] {
-	              4, 0, 0,
-	              4, 4, 0,
-	              0, 4, 0
-	          }),
-	          Piece(2, new i32[] {
-	              5, 5,
-	              5, 5
-	          }),
-	          Piece(4, new i32[] {
-	              0, 0, 0, 0,
-	              6, 6, 6, 6,
-	              0, 0, 0, 0,
-	              0, 0, 0, 0
-	          })
+        pieceList(std::make_unique<PieceList>(4, new PieceReference[] {
+			PieceReference(2, new i32[] {
+				0, 0,
+				1, 1,
+			}),
+			PieceReference(1, new i32[] {
+				2,
+			}),
+			PieceReference(2, new i32[] {
+				3, 3,
+				3, 0
+			}),
+			PieceReference(3, new i32[] {
+				0, 4, 0,
+				0, 4, 0,
+				0, 4, 0
+			})
         })),
         currentPiece(nullptr),
         rowAnimation(nullptr),
-        destroyParticles()
+        destroyParticles(),
+        destroyedRows(),
+        downLock(false)
 	{
 		pieceList->reset();
+
+		for (auto &ref : *pieceList) {
+			std::cout << "{" << ref.getBoundingX() << ref.getBoundingY() << ref.getBoundingWidth() << ref.getBoundingHeight() << "}";
+		}
 	}
 
-	CNGE::Color GameScene::colors[6] {
+	CNGE::Color GameScene::colors[7] {
 		CNGE::Color(252, 186, 3),
 		CNGE::Color(63, 212, 55),
 		CNGE::Color(36, 242, 242),
 		CNGE::Color(29, 66, 196),
 		CNGE::Color(149, 24, 222),
-		CNGE::Color(227, 130, 27)
+		CNGE::Color(227, 130, 27),
+		CNGE::Color(232, 30, 171)
 	};
 
 	CNGE::Color GameScene::boardColor = CNGE::Color(2, 25, 41);
 	CNGE::Color GameScene::gridColor = CNGE::Color(95, 104, 110);
+	CNGE::Color GameScene::outlineColor = CNGE::Color(197, 220, 235);
 
 	auto GameScene::start() -> void {
 		GameResources::testSound.loop(true);
@@ -85,14 +79,13 @@ namespace Game {
 		if (rowAnimation) {
 			if (rowAnimation->update(timing->time)) {
 				/* only when animation is done actually modify board */
-				removeRows(board.get(), startDestroyRow, numDestroyRows);
+				removeRows(board.get(), destroyedRows);
 				rowAnimation = nullptr;
 			}
 		} else {
 			if (tickTimer.updateContinual(timing->time)) {
 				if (currentPiece == nullptr) {
-					currentPiece = std::make_unique<Piece>(*pieceList->dequeue());
-					currentPiece->setPosition((board->getWidth() / 2) - (currentPiece->getBoundingSize() / 2), board->getHeight() - 1);
+					currentPiece = std::move(pieceList->dequeue(board->getWidth(), board->getHeight()));
 					calculateGhost(currentPiece.get(), board.get(), ghostX, ghostY);
 
 				} else {
@@ -116,9 +109,13 @@ namespace Game {
 					calculateGhost(currentPiece.get(), board.get(), ghostX, ghostY);
 				}
 			} else if (input->getKeyPressed(GLFW_KEY_UP)) {
-				currentPiece->setRotated(currentPiece->rotate(Rotation::rotatePositive));
-				calculateGhost(currentPiece.get(), board.get(), ghostX, ghostY);
-			} else if (input->getKeyDown(GLFW_KEY_DOWN)) {
+				i32* rotatedLayout;
+				i32 pushX;
+				if (rotatePiece(currentPiece.get(), board.get(), Rotation::rotatePositive, rotatedLayout, pushX)) {
+					currentPiece->setRotated(rotatedLayout);
+					calculateGhost(currentPiece.get(), board.get(), ghostX, ghostY);
+				}
+			} else if (input->getKeyDown(GLFW_KEY_DOWN) && !downLock) {
 				if (movePiece(currentPiece.get(), board.get(), 0, -1))
 					currentPiece->moveY(-1);
 				else
@@ -128,6 +125,8 @@ namespace Game {
 				piecePlaceRoutine();
 			}
 		}
+
+		if (!input->getKeyDown(GLFW_KEY_DOWN)) downLock = false;
 
 		camera.update();
 	}
@@ -141,29 +140,81 @@ namespace Game {
 		auto boardX = aspect.getGameWidth() / 2 - boardWidth / 2;
 		auto boardY = 16;
 		auto tileSize = boardHeight / board->getHeight();
+		auto outlineSize = tileSize / 8;
 
 		/* render board */
-		renderBoardBack(board.get(), boardX, 16, tileSize);
+		renderBoardBack(board.get(), boardX, 16, tileSize, outlineSize);
 
 		if (rowAnimation) {
 			/* stationary blocks below the destroyed */
-			renderBoard(board.get(), 0, startDestroyRow - 1, boardX, boardY, tileSize);
+			renderBoard(board.get(), 0, destroyedRows[0], boardX, boardY, tileSize);
 
 			/* falling blocks above the destroyed */
-			auto offsetY = CNGE::interpSquared<f32>(0, -tileSize * numDestroyRows, rowAnimation->getAlong());
-			renderBoard(board.get(), startDestroyRow + numDestroyRows, board->getHeight() - 1, boardX, boardY + offsetY, tileSize);
+			for (auto rowIndex = 0; rowIndex < destroyedRows.size(); ++rowIndex) {
+				auto start = destroyedRows[rowIndex] + 1;
+				auto end = rowIndex == destroyedRows.size() - 1 ? board->getHeight() : destroyedRows[rowIndex + 1];
+
+				auto offsetY = CNGE::interpSquared<f32>(0, -tileSize * (rowIndex + 1), rowAnimation->getAlong());
+				renderBoard(board.get(), start, end, boardX, boardY + offsetY, tileSize);
+			}
 
 			for (auto &particle : destroyParticles) {
 				particle.render(camera, boardX, boardY, tileSize, rowAnimation->getAlong(), colors);
 			}
 
 		} else {
-			renderBoard(board.get(), 0, board->getHeight() - 1, boardX, boardY, tileSize);
+			renderBoard(board.get(), 0, board->getHeight(), boardX, boardY, tileSize);
+		}
+
+		/* render pieces to the side of board */
+		if (pieceList) {
+			auto upcomingX = boardX + boardWidth + 8;
+			auto numUpcoming = 6;
+
+			/* board height minus gaps divided by num upcoming */
+			auto upcomingSize = (boardHeight - (8 * (numUpcoming - 1))) / numUpcoming;
+
+			for (auto i = 0; i < numUpcoming; ++i) {
+				auto upcomingY = boardY + i * (upcomingSize + 8);
+
+				GameResources::colorShader.enable(CNGE::Transform::toModel(upcomingX - outlineSize, upcomingY - outlineSize, upcomingSize + outlineSize * 2, upcomingSize + outlineSize * 2), camera.getProjview());
+				GameResources::colorShader.giveColor(outlineColor);
+				GameResources::rect.render();
+
+				GameResources::colorShader.enable(CNGE::Transform::toModel(upcomingX, upcomingY, upcomingSize, upcomingSize), camera.getProjview());
+				GameResources::colorShader.giveColor(boardColor);
+				GameResources::rect.render();
+
+				auto piece = pieceList->getPiece(numUpcoming - i - 1);
+				if (piece != nullptr) {
+					auto pieceRatio = f32(piece->getBoundingWidth()) / piece->getBoundingHeight();
+					f32 displayWidth, displayHeight, offsetX, offsetY;
+
+					/* width is greater than height */
+					if (pieceRatio > 1) {
+						displayWidth = upcomingSize - (outlineSize * 2);
+						displayHeight = (1 / pieceRatio) * displayWidth;
+						offsetX = outlineSize;
+						offsetY = (upcomingSize - displayHeight) / 2;
+						/* height is greater than width */
+					} else {
+						displayHeight = upcomingSize - (outlineSize * 2);
+						displayWidth = pieceRatio * displayHeight;
+						offsetY = outlineSize;
+						offsetX = (upcomingSize - displayWidth) / 2;
+					}
+
+					auto displayTilesize = displayWidth / piece->getBoundingWidth();
+
+					renderPiece(piece, upcomingX + offsetX - (displayTilesize * piece->getBoundingX()),
+					            upcomingY + offsetY - (displayTilesize * piece->getBoundingY()), displayTilesize);
+				}
+			}
 		}
 
 		/* render piece and ghost */
 		if (currentPiece != nullptr) {
-			renderPiece(currentPiece.get(), boardX, 16, tileSize);
+			renderPiece(currentPiece.get(), board.get(), boardX, 16, tileSize);
 
 			renderPiece(currentPiece.get(), ghostX, ghostY, boardX, boardY, tileSize, 0.5_f32);
 		}
@@ -174,10 +225,11 @@ namespace Game {
 	}
 
 	/* tetris */
-	auto GameScene::renderBoardBack(TetrisBoard *board, f32 x, f32 y, f32 tileSize) -> void {
+
+	auto GameScene::renderBoardBack(TetrisBoard *board, f32 x, f32 y, f32 tileSize, f32 outlineSize) -> void {
 		/* render board outline */
-		GameResources::colorShader.enable(CNGE::Transform::toModel(x - tileSize / 8, y - tileSize / 8, tileSize * board->getWidth() + tileSize / 4, tileSize * board->getHeight() + tileSize / 4), camera.getProjview());
-		GameResources::colorShader.giveColor(gridColor);
+		GameResources::colorShader.enable(CNGE::Transform::toModel(x - outlineSize, y - outlineSize, tileSize * board->getWidth() + outlineSize * 2, tileSize * board->getHeight() + outlineSize * 2), camera.getProjview());
+		GameResources::colorShader.giveColor(outlineColor);
 		GameResources::rect.render();
 
 		GameResources::colorShader.enable(CNGE::Transform::toModel(x, y, tileSize * board->getWidth(), tileSize * board->getHeight()), camera.getProjview());
@@ -201,7 +253,7 @@ namespace Game {
 
 	auto GameScene::renderBoard(TetrisBoard *board, i32 startRow, i32 endRow, f32 x, f32 y, f32 tileSize) -> void {
 		/* render tiles in the board */
-		for (auto j = startRow; j <= endRow; ++j) {
+		for (auto j = startRow; j < endRow; ++j) {
 			for (auto i = 0; i < board->getWidth(); ++i) {
 				auto tile = board->get(i, j);
 
@@ -215,20 +267,28 @@ namespace Game {
 		}
 	}
 
-	auto GameScene::renderPiece(Piece *piece, f32 x, f32 y, f32 tileSize, f32 opacity) -> void {
-		renderPiece(piece, piece->getX(), piece->getY(), x, y, tileSize, opacity);
+	auto GameScene::renderPiece(Piece *piece, TetrisBoard *board, f32 offsetX, f32 offsetY, f32 tileSize, f32 opacity) -> void {
+		renderPiece(piece->getLayout(), piece->getBoundingSize(), board->getHeight(), piece->getX(), piece->getY(), offsetX, offsetY, tileSize, opacity);
 	}
 
-	auto GameScene::renderPiece(Piece *piece, i32 overrideX, i32 overrideY, f32 x, f32 y, f32 tileSize, f32 opacity) -> void {
-		for (auto j = 0; j < piece->getBoundingSize(); ++j) {
-			for (auto i = 0; i < piece->getBoundingSize(); ++i) {
-				auto tile = piece->getTile(i, j);
+	auto GameScene::renderPiece(PieceReference *piece, f32 offsetX, f32 offsetY, f32 tileSize, f32 opacity) -> void {
+		renderPiece(piece->getLayout(), piece->getBoundingSize(), 0x7fffffff, 0, 0, offsetX, offsetY, tileSize, opacity);
+	}
 
-				if (tile != 0) {
+	auto GameScene::renderPiece(Piece *piece, i32 pieceX, i32 pieceY, f32 offsetX, f32 offsetY, f32 tileSize, f32 opacity) -> void {
+		renderPiece(piece->getLayout(), piece->getBoundingSize(), 0x7fffffff, pieceX, pieceY, offsetX, offsetY, tileSize, opacity);
+	}
+
+	auto GameScene::renderPiece(i32* layout, i32 boundingSize, i32 maxHeight, i32 pieceX, i32 pieceY, f32 offsetX, f32 offsetY, f32 tileSize, f32 opacity) -> void {
+		for (auto j = 0; j < boundingSize; ++j) {
+			for (auto i = 0; i < boundingSize; ++i) {
+				auto tile = layout[j * boundingSize + i];
+
+				if (tile != 0 && j + pieceY < maxHeight) {
 					GameResources::colorShader.enable(
 						CNGE::Transform::toModel(
-							x + tileSize * f32(i + overrideX),
-							y + tileSize * f32(j + overrideY),
+							offsetX + tileSize * f32(i + pieceX),
+							offsetY + tileSize * f32(j + pieceY),
 							tileSize,
 							tileSize
 						),
@@ -247,19 +307,23 @@ namespace Game {
 		placePiece(currentPiece.get(), board.get());
 		currentPiece = nullptr;
 
-		checkForRows(board.get(), startDestroyRow, numDestroyRows);
-		if (numDestroyRows != 0) {
+		checkForRows(board.get(), destroyedRows);
+		if (!destroyedRows.empty()) {
 			rowAnimation = std::make_unique<CNGE::Timer>(0.5, true);
 
 			destroyParticles.clear();
-			destroyParticles.reserve(board->getWidth() * numDestroyRows);
+			destroyParticles.reserve(board->getWidth() * destroyedRows.size());
 
-			for (auto j = startDestroyRow; j < startDestroyRow + numDestroyRows; ++j) {
+			for (auto &row : destroyedRows) {
 				for (auto i = 0; i < board->getWidth(); ++i) {
-					destroyParticles.emplace_back(i, j, board->get(i, j));
+					auto tile = board->get(i, row);
+
+					if (tile) destroyParticles.emplace_back(i, row, tile);
 				}
 			}
 		}
+
+		downLock = true;
 	}
 
 	/**
@@ -272,24 +336,31 @@ namespace Game {
 	}
 
 	auto GameScene::movePiece(Piece *piece, TetrisBoard *board, i32 overrideX, i32 overrideY, i32 offsetX, i32 offsetY) -> bool {
-		for (auto j = 0; j < piece->getBoundingSize(); ++j)
-			for (auto i = 0; i < piece->getBoundingSize(); ++i) {
-				auto x = overrideX + i;
-				auto y = overrideY + j;
+		return !testCollision(piece->getLayout(), piece->getBoundingSize(), overrideX + offsetX, overrideY + offsetY, board);
+	}
 
-				auto afterX = x + offsetX;
-				auto afterY = y + offsetY;
+	auto GameScene::rotatePiece(Piece *piece, TetrisBoard *board, Rotation::RotateFunc rotateFunc, i32 *&rotatedLayout, i32 &pushX) -> bool {
+		rotatedLayout = piece->rotate(rotateFunc);
 
-				if (
-					x >= 0 && x < board->getWidth() &&
-					y >= 0 && y < board->getHeight() &&
-					piece->getTile(i, j) &&
-					(afterY == -1 || afterX == -1 || afterX == board->getWidth() || board->get(afterX, afterY))
-				)
-					return false;
+		if (testCollision(rotatedLayout, piece->getBoundingSize(), piece->getX(), piece->getY(), board)) {
+			delete[] rotatedLayout;
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	auto GameScene::testCollision(i32 *layout, i32 size, i32 pieceX, i32 pieceY, TetrisBoard *board) -> bool {
+		for (auto j = 0; j < size; ++j)
+			for (auto i = 0; i < size; ++i) {
+				auto x = pieceX + i;
+				auto y = pieceY + j;
+
+				if (layout[j * size + i] && board->getCollision(x, y))
+					return true;
 			}
 
-		return true;
+		return false;
 	}
 
 	auto GameScene::placePiece(Piece *piece, TetrisBoard *board) -> void {
@@ -306,10 +377,8 @@ namespace Game {
 		while (movePiece(piece, board, ghostX, ghostY, 0, -1)) --ghostY;
 	}
 
-	auto GameScene::checkForRows(TetrisBoard *board, i32& startRow, i32& numRows) -> void {
-		auto hasFound = false;
-		startRow = 0;
-		numRows = 0;
+	auto GameScene::checkForRows(TetrisBoard *board, std::vector<i32>& destroyedRows) -> void {
+		destroyedRows.clear();
 
 		for (auto j = 0; j < board->getHeight(); ++j) {
 			auto row = true;
@@ -321,21 +390,23 @@ namespace Game {
 				}
 			}
 
-			if (row) {
-				if (!hasFound) {
-					hasFound = true;
-					startRow = j;
-				}
-
-				++numRows;
-			}
-			else if (hasFound) return;
+			if (row) destroyedRows.push_back(j);
 		}
 	}
 
-	auto GameScene::removeRows(TetrisBoard *board, i32 startRow, i32 numRows) -> void {
-		for (auto j = startRow; j < board->getHeight() - numRows; ++j)
-			for (auto i = 0; i < board->getWidth(); ++i)
-				board->set(i, j, board->get(i, j + numRows));
+	auto GameScene::removeRows(TetrisBoard *board, std::vector<i32> &destroyRows) -> void {
+		for (auto rowIndex = 0; rowIndex < destroyRows.size(); ++rowIndex) {
+			auto currentRow = destroyRows[rowIndex];
+			auto nextRow = rowIndex == destroyRows.size() - 1 ? board->getHeight() + 1 : destroyRows[rowIndex + 1];
+
+			auto chunkSize = nextRow - currentRow - 1;
+			auto fallDown = rowIndex + 1;
+
+			auto start = currentRow - rowIndex;
+
+			for (auto j = start; j < start + chunkSize; ++j)
+				for (auto i = 0; i < board->getWidth(); ++i)
+					board->set(i, j, (j + fallDown) >= board->getHeight() ? 0 : board->get(i, j + fallDown));
+		}
 	}
 }

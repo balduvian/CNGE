@@ -7,18 +7,17 @@
 
 #include "cnge8/types.h"
 
-#include <functional>
+#include "rotation.h"
 
 namespace Game {
 	class Piece {
 	private:
 		i32 x, y, boundingSize, *layout;
 
+	public:
 		static auto copyLayout(i32, i32*) -> i32*;
 
-	public:
 		Piece(i32, i32, i32, i32*);
-		Piece(i32, i32*);
 
 		Piece(const Piece&);
 		Piece(Piece&&);
@@ -40,7 +39,7 @@ namespace Game {
 		auto moveX(i32) -> void;
 		auto moveY(i32) -> void;
 
-		auto rotate(std::function<i32(i32, i32, i32)>) -> i32*;
+		auto rotate(Rotation::RotateFunc) -> i32*;
 
 		auto setRotated(i32*) -> void;
 

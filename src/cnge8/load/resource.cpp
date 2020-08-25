@@ -6,6 +6,10 @@ namespace CNGE {
 	Resource::Resource(bool hasGather)
 		: hasGather(hasGather), gatherStatus(GatherStatus::UNGATHERED), processStatus(ProcessStatus::UNPROCESSED), gatherThread() {}
 
+	Resource::~Resource() {
+		joinThread();
+	}
+
 	/* gather */
 
 	auto Resource::joinThread() -> void {
@@ -79,7 +83,6 @@ namespace CNGE {
 
 	auto Resource::destroy() -> void {
 		if (processStatus == ProcessStatus::PROCESSED) customUnload();
-		if (gatherStatus == GatherStatus::GATHERING) joinThread();
 		if (gatherStatus == GatherStatus::UNGATHERED) customDiscard();
 	}
 

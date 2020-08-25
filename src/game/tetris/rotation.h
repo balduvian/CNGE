@@ -10,6 +10,8 @@
 namespace Game {
 	class Rotation {
 	public:
+		using RotateFunc = i32(*)(i32, i32, i32);
+
 		static auto rotatePositive(i32, i32, i32) -> i32;
 		static auto rotateNegative(i32, i32, i32) -> i32;
 		static auto rotateTwice(i32, i32, i32) -> i32;

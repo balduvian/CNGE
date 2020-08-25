@@ -14,9 +14,10 @@
 
 #include "tetris/destroyParticle.h"
 #include "tetris/tetrisBoard.h"
-#include "tetris/piece.h"
+#include "tetris/pieceReference.h"
 #include "tetris/pieceList.h"
 #include "tetris/animation.h"
+#include "tetris/rotation.h"
 
 namespace Game {
 	class GameScene : public CNGE::Scene {
@@ -39,11 +40,14 @@ namespace Game {
 
 		std::unique_ptr<CNGE::Timer> rowAnimation;
 		std::vector<DestroyParticle> destroyParticles;
-		i32 startDestroyRow, numDestroyRows;
+		std::vector<i32> destroyedRows;
+
+		bool downLock;
 
 		static CNGE::Color colors[];
 		static CNGE::Color boardColor;
 		static CNGE::Color gridColor;
+		static CNGE::Color outlineColor;
 
 	public:
 		GameScene();
@@ -60,21 +64,27 @@ namespace Game {
 
 		/* tetris */
 
-		auto renderBoardBack(TetrisBoard*, f32, f32, f32) -> void;
+		auto renderBoardBack(TetrisBoard*, f32, f32, f32, f32) -> void;
 		auto renderBoard(TetrisBoard*, i32, i32, f32, f32, f32) -> void;
-		auto renderPiece(Piece*, f32, f32, f32, f32 = 1.0_f32) -> void;
+
+		auto renderPiece(Piece*, TetrisBoard*, f32, f32, f32, f32 = 1.0_f32) -> void;
+		auto renderPiece(PieceReference*, f32, f32, f32, f32 = 1.0_f32) -> void;
 		auto renderPiece(Piece*, i32, i32, f32, f32, f32, f32 = 1.0_f32) -> void;
+		auto renderPiece(i32*, i32, i32, i32, i32, f32, f32, f32, f32 = 1.0_f32) -> void;
 
 		auto piecePlaceRoutine() -> void;
 
 		static auto movePiece(Piece*, TetrisBoard*, i32, i32) -> bool;
 		static auto movePiece(Piece*, TetrisBoard*, i32, i32, i32, i32) -> bool;
+		static auto rotatePiece(Piece*, TetrisBoard*, Rotation::RotateFunc, i32*&, i32&) -> bool;
 		static auto placePiece(Piece*, TetrisBoard*) -> void;
+
+		static auto testCollision(i32*, i32, i32, i32, TetrisBoard*) -> bool;
 
 		static auto calculateGhost(Piece*, TetrisBoard*, i32&, i32&) -> void;
 
-		static auto checkForRows(TetrisBoard*, i32&, i32&) -> void;
-		static auto removeRows(TetrisBoard*, i32, i32) -> void;
+		static auto checkForRows(TetrisBoard*, std::vector<i32>&) -> void;
+		static auto removeRows(TetrisBoard*, std::vector<i32>&) -> void;
 	};
 }
 
