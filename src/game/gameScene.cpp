@@ -39,13 +39,12 @@ namespace Game {
         rowAnimation(nullptr),
         destroyParticles(),
         destroyedRows(),
-        downLock(false)
+        downLock(false),
+        moveCounter(0),
+        hold(nullptr),
+        usedHold(false)
 	{
 		pieceList->reset();
-
-		for (auto &ref : *pieceList) {
-			std::cout << "{" << ref.getBoundingX() << ref.getBoundingY() << ref.getBoundingWidth() << ref.getBoundingHeight() << "}";
-		}
 	}
 
 	CNGE::Color GameScene::colors[7] {
@@ -84,9 +83,10 @@ namespace Game {
 			}
 		} else {
 			if (tickTimer.updateContinual(timing->time)) {
+				moveCounter = 0;
+
 				if (currentPiece == nullptr) {
-					currentPiece = std::move(pieceList->dequeue(board->getWidth(), board->getHeight()));
-					calculateGhost(currentPiece.get(), board.get(), ghostX, ghostY);
+					newPiece(pieceList->dequeue(), false);
 
 				} else {
 					if (movePiece(currentPiece.get(), board.get(), 0, -1))
@@ -102,11 +102,13 @@ namespace Game {
 				if (movePiece(currentPiece.get(), board.get(), -1, 0)) {
 					currentPiece->moveX(-1);
 					calculateGhost(currentPiece.get(), board.get(), ghostX, ghostY);
+					moveTimer();
 				}
 			} else if (input->getKeyPressed(GLFW_KEY_RIGHT)) {
 				if (movePiece(currentPiece.get(), board.get(), 1, 0)) {
 					currentPiece->moveX(1);
 					calculateGhost(currentPiece.get(), board.get(), ghostX, ghostY);
+					moveTimer();
 				}
 			} else if (input->getKeyPressed(GLFW_KEY_UP)) {
 				i32* rotatedLayout;
@@ -114,15 +116,29 @@ namespace Game {
 				if (rotatePiece(currentPiece.get(), board.get(), Rotation::rotatePositive, rotatedLayout, pushX)) {
 					currentPiece->setRotated(rotatedLayout);
 					calculateGhost(currentPiece.get(), board.get(), ghostX, ghostY);
+					moveTimer();
 				}
 			} else if (input->getKeyDown(GLFW_KEY_DOWN) && !downLock) {
-				if (movePiece(currentPiece.get(), board.get(), 0, -1))
+				if (movePiece(currentPiece.get(), board.get(), 0, -1)) {
 					currentPiece->moveY(-1);
-				else
-					piecePlaceRoutine();
+					tickTimer.setTimer(0);
+					moveCounter = 0;
+				}
 			} else if (input->getKeyPressed(GLFW_KEY_SPACE)) {
 				currentPiece->setXY(ghostX, ghostY);
 				piecePlaceRoutine();
+				tickTimer.setTimerMax();
+			} else if (input->getKeyPressed(GLFW_KEY_C)) {
+				if (currentPiece && !usedHold) {
+					if (hold) {
+						auto temp = new PieceReference(currentPiece->getBoundingSize(), Piece::copyLayout(currentPiece->getBoundingSize(), currentPiece->getLayout()));
+						newPiece(hold.get(), true);
+						hold = std::unique_ptr<PieceReference>(temp);
+					} else {
+						hold = std::make_unique<PieceReference>(currentPiece->getBoundingSize(), Piece::copyLayout(currentPiece->getBoundingSize(), currentPiece->getLayout()));
+						newPiece(pieceList->dequeue(), true);
+					}
+				}
 			}
 		}
 
@@ -166,51 +182,7 @@ namespace Game {
 			renderBoard(board.get(), 0, board->getHeight(), boardX, boardY, tileSize);
 		}
 
-		/* render pieces to the side of board */
-		if (pieceList) {
-			auto upcomingX = boardX + boardWidth + 8;
-			auto numUpcoming = 6;
-
-			/* board height minus gaps divided by num upcoming */
-			auto upcomingSize = (boardHeight - (8 * (numUpcoming - 1))) / numUpcoming;
-
-			for (auto i = 0; i < numUpcoming; ++i) {
-				auto upcomingY = boardY + i * (upcomingSize + 8);
-
-				GameResources::colorShader.enable(CNGE::Transform::toModel(upcomingX - outlineSize, upcomingY - outlineSize, upcomingSize + outlineSize * 2, upcomingSize + outlineSize * 2), camera.getProjview());
-				GameResources::colorShader.giveColor(outlineColor);
-				GameResources::rect.render();
-
-				GameResources::colorShader.enable(CNGE::Transform::toModel(upcomingX, upcomingY, upcomingSize, upcomingSize), camera.getProjview());
-				GameResources::colorShader.giveColor(boardColor);
-				GameResources::rect.render();
-
-				auto piece = pieceList->getPiece(numUpcoming - i - 1);
-				if (piece != nullptr) {
-					auto pieceRatio = f32(piece->getBoundingWidth()) / piece->getBoundingHeight();
-					f32 displayWidth, displayHeight, offsetX, offsetY;
-
-					/* width is greater than height */
-					if (pieceRatio > 1) {
-						displayWidth = upcomingSize - (outlineSize * 2);
-						displayHeight = (1 / pieceRatio) * displayWidth;
-						offsetX = outlineSize;
-						offsetY = (upcomingSize - displayHeight) / 2;
-						/* height is greater than width */
-					} else {
-						displayHeight = upcomingSize - (outlineSize * 2);
-						displayWidth = pieceRatio * displayHeight;
-						offsetY = outlineSize;
-						offsetX = (upcomingSize - displayWidth) / 2;
-					}
-
-					auto displayTilesize = displayWidth / piece->getBoundingWidth();
-
-					renderPiece(piece, upcomingX + offsetX - (displayTilesize * piece->getBoundingX()),
-					            upcomingY + offsetY - (displayTilesize * piece->getBoundingY()), displayTilesize);
-				}
-			}
-		}
+		renderSide(pieceList.get(), hold.get(), boardX, boardY, boardWidth, boardHeight, outlineSize);
 
 		/* render piece and ghost */
 		if (currentPiece != nullptr) {
@@ -265,6 +237,60 @@ namespace Game {
 				}
 			}
 		}
+	}
+
+	auto GameScene::renderSide(PieceList *pieceList, PieceReference *hold, f32 boardX, f32 boardY, f32 boardWidth, f32 boardHeight, f32 outlineSize) -> void {
+		auto renderBox = [this](PieceReference* piece, f32 x, f32 y, f32 size, f32 outlineSize) {
+			GameResources::colorShader.enable(CNGE::Transform::toModel(x - outlineSize, y - outlineSize, size + outlineSize * 2, size + outlineSize * 2), camera.getProjview());
+			GameResources::colorShader.giveColor(outlineColor);
+			GameResources::rect.render();
+
+			GameResources::colorShader.enable(CNGE::Transform::toModel(x, y, size, size), camera.getProjview());
+			GameResources::colorShader.giveColor(boardColor);
+			GameResources::rect.render();
+
+			if (piece) {
+				auto pieceRatio = f32(piece->getBoundingWidth()) / piece->getBoundingHeight();
+				f32 displayWidth, displayHeight, offsetX, offsetY;
+
+				/* width is greater than height */
+				if (pieceRatio > 1) {
+					displayWidth = size - (outlineSize * 2);
+					displayHeight = (1 / pieceRatio) * displayWidth;
+					offsetX = outlineSize;
+					offsetY = (size - displayHeight) / 2;
+					/* height is greater than width */
+				} else {
+					displayHeight = size - (outlineSize * 2);
+					displayWidth = pieceRatio * displayHeight;
+					offsetY = outlineSize;
+					offsetX = (size - displayWidth) / 2;
+				}
+
+				auto displayTilesize = displayWidth / piece->getBoundingWidth();
+
+				renderPiece(piece, x + offsetX - (displayTilesize * piece->getBoundingX()),
+				            y + offsetY - (displayTilesize * piece->getBoundingY()), displayTilesize);
+			}
+		};
+
+		auto numUpcoming = 6;
+		/* board height minus gaps divided by num upcoming */
+		auto upcomingSize = (boardHeight - (8 * (numUpcoming - 1))) / numUpcoming;
+
+		if (pieceList) {
+			for (auto i = 0; i < numUpcoming; ++i) {
+				auto upcomingX = boardX + boardWidth + 8;
+				auto upcomingY = boardY + i * (upcomingSize + 8);
+
+				renderBox(pieceList->getPiece(numUpcoming - i - 1), upcomingX, upcomingY, upcomingSize, outlineSize);
+			}
+		}
+
+		auto holdX = boardX - 8 - upcomingSize;
+		auto holdY = boardY + boardHeight - upcomingSize;
+
+		renderBox(hold, holdX, holdY, upcomingSize, outlineSize);
 	}
 
 	auto GameScene::renderPiece(Piece *piece, TetrisBoard *board, f32 offsetX, f32 offsetY, f32 tileSize, f32 opacity) -> void {
@@ -324,6 +350,18 @@ namespace Game {
 		}
 
 		downLock = true;
+	}
+
+	auto GameScene::moveTimer() -> void {
+		tickTimer.addTimer(pow(2, -moveCounter) * -0.25);
+		++moveCounter;
+	}
+
+	auto GameScene::newPiece(PieceReference *reference, bool usedHold) -> void {
+		auto [x, y] = initialPosition(reference, board.get());
+		currentPiece = std::move(reference->createPiece(x, y));
+		calculateGhost(currentPiece.get(), board.get(), ghostX, ghostY);
+		this->usedHold = usedHold;
 	}
 
 	/**
@@ -408,5 +446,12 @@ namespace Game {
 				for (auto i = 0; i < board->getWidth(); ++i)
 					board->set(i, j, (j + fallDown) >= board->getHeight() ? 0 : board->get(i, j + fallDown));
 		}
+	}
+
+	auto GameScene::initialPosition(PieceReference *reference, TetrisBoard *board) -> PositionReturn {
+		auto x = (board->getWidth() / 2) - (reference->getBoundingWidth() / 2) - reference->getBoundingX();
+		auto y = board->getHeight() - reference->getBoundingY() - 1;
+
+		return { x, y };
 	}
 }

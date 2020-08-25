@@ -45,7 +45,7 @@ namespace Game {
 			return nullptr;
 	}
 
-	auto PieceList::dequeue(i32 boardWidth, i32 boardHeight) -> std::unique_ptr<Piece> {
+	auto PieceList::dequeue() -> PieceReference* {
 		/* remove first element of queue */
 		auto ret = firstQueue.at(0);
 		firstQueue.erase(firstQueue.begin());
@@ -55,10 +55,7 @@ namespace Game {
 			generateQueue(nextQueue);
 		}
 
-		auto x = (boardWidth / 2) - (ret->getBoundingWidth() / 2) - ret->getBoundingX();
-		auto y = boardHeight - ret->getBoundingY() - 1;
-
-		return ret->createPiece(x, y);
+		return ret;
 	}
 
 	auto PieceList::reset() -> void {

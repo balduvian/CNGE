@@ -44,6 +44,11 @@ namespace Game {
 
 		bool downLock;
 
+		i32 moveCounter;
+
+		std::unique_ptr<PieceReference> hold;
+		bool usedHold;
+
 		static CNGE::Color colors[];
 		static CNGE::Color boardColor;
 		static CNGE::Color gridColor;
@@ -66,6 +71,7 @@ namespace Game {
 
 		auto renderBoardBack(TetrisBoard*, f32, f32, f32, f32) -> void;
 		auto renderBoard(TetrisBoard*, i32, i32, f32, f32, f32) -> void;
+		auto renderSide(PieceList*, PieceReference*, f32, f32, f32, f32, f32) -> void;
 
 		auto renderPiece(Piece*, TetrisBoard*, f32, f32, f32, f32 = 1.0_f32) -> void;
 		auto renderPiece(PieceReference*, f32, f32, f32, f32 = 1.0_f32) -> void;
@@ -73,6 +79,8 @@ namespace Game {
 		auto renderPiece(i32*, i32, i32, i32, i32, f32, f32, f32, f32 = 1.0_f32) -> void;
 
 		auto piecePlaceRoutine() -> void;
+		auto moveTimer() -> void;
+		auto newPiece(PieceReference*, bool) -> void;
 
 		static auto movePiece(Piece*, TetrisBoard*, i32, i32) -> bool;
 		static auto movePiece(Piece*, TetrisBoard*, i32, i32, i32, i32) -> bool;
@@ -80,11 +88,12 @@ namespace Game {
 		static auto placePiece(Piece*, TetrisBoard*) -> void;
 
 		static auto testCollision(i32*, i32, i32, i32, TetrisBoard*) -> bool;
-
 		static auto calculateGhost(Piece*, TetrisBoard*, i32&, i32&) -> void;
-
 		static auto checkForRows(TetrisBoard*, std::vector<i32>&) -> void;
+
 		static auto removeRows(TetrisBoard*, std::vector<i32>&) -> void;
+		struct PositionReturn { i32 x, y; };
+		static auto initialPosition(PieceReference*, TetrisBoard*) -> PositionReturn;
 	};
 }
 

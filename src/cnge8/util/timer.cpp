@@ -60,6 +60,14 @@ namespace CNGE {
 		this->timer = timer;
 	}
 
+	auto Timer::setTimerMax() -> void {
+		this->timer = time;
+	}
+
+	auto Timer::addTimer(f32 timer) -> void {
+		this->timer += timer;
+	}
+
 	auto Timer::getTimer() -> f32 {
 		return timer;
 	}
@@ -75,4 +83,5 @@ namespace CNGE {
 	auto Timer::getGoing() -> bool {
 		return going;
 	}
+
 }

@@ -27,7 +27,9 @@ namespace CNGE {
 		auto getAlong() -> f32;
 
 		auto setTimer(f32) -> void;
+		auto addTimer(f32) -> void;
 		auto getTimer() -> f32;
+		auto setTimerMax() -> void;
 
 		auto setTime(f32) -> void;
 		auto getTime() -> f32;

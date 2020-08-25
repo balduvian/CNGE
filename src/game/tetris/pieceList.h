@@ -29,7 +29,7 @@ namespace Game {
 
 		auto getPiece(i32) -> PieceReference*;
 
-		auto dequeue(i32, i32) -> std::unique_ptr<Piece>;
+		auto dequeue() -> PieceReference*;
 
 		auto reset() -> void;
 
