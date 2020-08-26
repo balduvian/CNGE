@@ -17,22 +17,41 @@ namespace Game {
 		randomDevice(),
 		tickTimer(0.5),
         board(std::make_unique<TetrisBoard>(10, 20)),
-        pieceList(std::make_unique<PieceList>(4, new PieceReference[] {
-			PieceReference(2, new i32[] {
-				0, 0,
-				1, 1,
-			}),
-			PieceReference(1, new i32[] {
-				2,
-			}),
-			PieceReference(2, new i32[] {
-				3, 3,
-				3, 0
+        pieceList(std::make_unique<PieceList>(7, new PieceReference[] {
+			PieceReference(3, new i32[] {
+				1, 0, 0,
+				1, 1, 0,
+				0, 1, 0
 			}),
 			PieceReference(3, new i32[] {
-				0, 4, 0,
-				0, 4, 0,
-				0, 4, 0
+				0, 2, 0,
+				2, 2, 0,
+				2, 0, 0
+			}),
+			PieceReference(3, new i32[] {
+				0, 0, 0,
+				3, 3, 3,
+				0, 3, 0
+			}),
+			PieceReference(2, new i32[] {
+				4, 4,
+				4, 4
+			}),
+			PieceReference(3, new i32[] {
+				0, 0, 0,
+				5, 5, 5,
+				5, 0, 0
+			}),
+			PieceReference(3, new i32[] {
+				0, 0, 0,
+				6, 6, 6,
+				0, 0, 6
+			}),
+			PieceReference(4, new i32[] {
+				0, 0, 0, 0,
+				7, 7, 7, 7,
+				0, 0, 0, 0,
+				0, 0, 0, 0
 			})
         })),
         currentPiece(nullptr),
@@ -111,10 +130,10 @@ namespace Game {
 					moveTimer();
 				}
 			} else if (input->getKeyPressed(GLFW_KEY_UP)) {
-				i32* rotatedLayout;
-				i32 pushX;
+				i32 pushX, *rotatedLayout;
 				if (rotatePiece(currentPiece.get(), board.get(), Rotation::rotatePositive, rotatedLayout, pushX)) {
 					currentPiece->setRotated(rotatedLayout);
+					currentPiece->moveX(pushX);
 					calculateGhost(currentPiece.get(), board.get(), ghostX, ghostY);
 					moveTimer();
 				}
@@ -127,7 +146,6 @@ namespace Game {
 			} else if (input->getKeyPressed(GLFW_KEY_SPACE)) {
 				currentPiece->setXY(ghostX, ghostY);
 				piecePlaceRoutine();
-				tickTimer.setTimerMax();
 			} else if (input->getKeyPressed(GLFW_KEY_C)) {
 				if (currentPiece && !usedHold) {
 					if (hold) {
@@ -334,7 +352,11 @@ namespace Game {
 		currentPiece = nullptr;
 
 		checkForRows(board.get(), destroyedRows);
-		if (!destroyedRows.empty()) {
+
+		if (destroyedRows.empty()) {
+			newPiece(pieceList->dequeue(), false);
+
+		} else {
 			rowAnimation = std::make_unique<CNGE::Timer>(0.5, true);
 
 			destroyParticles.clear();
@@ -380,12 +402,26 @@ namespace Game {
 	auto GameScene::rotatePiece(Piece *piece, TetrisBoard *board, Rotation::RotateFunc rotateFunc, i32 *&rotatedLayout, i32 &pushX) -> bool {
 		rotatedLayout = piece->rotate(rotateFunc);
 
-		if (testCollision(rotatedLayout, piece->getBoundingSize(), piece->getX(), piece->getY(), board)) {
-			delete[] rotatedLayout;
-			return false;
-		} else {
+		pushX = 0;
+		if (!testCollision(rotatedLayout, piece->getBoundingSize(), piece->getX(), piece->getY(), board))
 			return true;
+
+		auto testRange = piece->getBoundingSize() / 2;
+
+		for (auto i = 1; i <= testRange; ++i) {
+			pushX = i;
+			if (!testCollision(rotatedLayout, piece->getBoundingSize(), piece->getX() + pushX, piece->getY(), board))
+				return true;
 		}
+
+		for (auto i = -1; i >= -testRange; --i) {
+			pushX = i;
+			if (!testCollision(rotatedLayout, piece->getBoundingSize(), piece->getX() + pushX, piece->getY(), board))
+				return true;
+		}
+
+		delete[] rotatedLayout;
+		return false;
 	}
 
 	auto GameScene::testCollision(i32 *layout, i32 size, i32 pieceX, i32 pieceY, TetrisBoard *board) -> bool {
@@ -403,9 +439,17 @@ namespace Game {
 
 	auto GameScene::placePiece(Piece *piece, TetrisBoard *board) -> void {
 		for (auto j = 0; j < piece->getBoundingSize(); ++j)
-			for (auto i = 0; i < piece->getBoundingSize(); ++i)
-				if (piece->getTile(i, j))
-					board->set(piece->getX() + i, piece->getY() + j, piece->getTile(i, j));
+			for (auto i = 0; i < piece->getBoundingSize(); ++i) {
+				auto x = piece->getX() + i;
+				auto y = piece->getY() + j;
+
+				if (
+					piece->getTile(i, j) &&
+					x > -1 && x < board->getWidth() &&
+					y > -1 && y < board->getHeight()
+			    )
+					board->set(x, y, piece->getTile(i, j));
+			}
 	}
 
 	auto GameScene::calculateGhost(Piece *piece, TetrisBoard *board, i32 &ghostX, i32 &ghostY) -> void {

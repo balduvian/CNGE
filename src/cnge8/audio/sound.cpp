@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include <AL\al.h>
+#include <al\al.h>
 
 #include "sound.h"
 
