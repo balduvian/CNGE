@@ -2,6 +2,7 @@
 // Created by Emmet on 8/19/2020.
 //
 
+#include <iostream>
 #include "loadError.h"
 
 namespace CNGE {

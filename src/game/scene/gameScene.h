@@ -12,12 +12,12 @@
 #include <memory>
 #include <random>
 
-#include "tetris/destroyParticle.h"
-#include "tetris/tetrisBoard.h"
-#include "tetris/pieceReference.h"
-#include "tetris/pieceList.h"
-#include "tetris/animation.h"
-#include "tetris/rotation.h"
+#include "../tetris/destroyParticle.h"
+#include "../tetris/tetrisBoard.h"
+#include "../tetris/pieceReference.h"
+#include "../tetris/pieceList.h"
+#include "../tetris/animation.h"
+#include "../tetris/rotation.h"
 
 namespace Game {
 	class GameScene : public CNGE::Scene {

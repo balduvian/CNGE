@@ -1,4 +1,5 @@
 
+#include <iostream>
 #include "GL/glew.h"
 #include "texture.h"
 
@@ -8,28 +9,19 @@ namespace CNGE {
 
 	/* loading */
 
-	/// regular texture constructor
-	/// without texture params, will set to default params
-	Texture::Texture(const char* path, TextureParams params)
-		: Resource(true), assetPath(path), assetImage(Image::makeEmpty()), width(), height(), texture(),
+	/**
+	 * important! texture does not manage the pixel data you pass into it
+	 *
+	 * @param width
+	 * @param height
+	 * @param pixels
+	 * @param params
+	 */
+	Texture::Texture(u32 width, u32 height, u8* pixels, TextureParams params)
+		: width(), height(), texture(),
 		horzWrap(params.horzWrap), vertWrap(params.vertWrap),
-		minFilter(params.minFilter), magFilter(params.magFilter) {}
+		minFilter(params.minFilter), magFilter(params.magFilter) {
 
-	auto Texture::customGather() -> LoadError {
-		auto filename = std::filesystem::path(assetPath);
-
-		assetImage = std::move(Image::fromPNG(filename));
-
-		if (!assetImage.isValid())
-			return LoadError(std::string("image file ") + assetPath + " could not be loaded");
-
-		width = assetImage.getWidth();
-		height = assetImage.getHeight();
-
-		return LoadError::none();
-	}
-
-	auto Texture::customProcess() -> LoadError {
 		glCreateTextures(GL_TEXTURE_2D, 1, &texture);
 
 		bind();
@@ -39,19 +31,7 @@ namespace CNGE {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, assetImage.getPixels());
-
-		return LoadError::none();
-	}
-
-	auto Texture::customDiscard() -> LoadError {
-		assetImage.invalidate();
-		return LoadError::none();
-	}
-
-	auto Texture::customUnload() -> LoadError {
-		glDeleteTextures(1, &texture);
-		return LoadError::none();
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 	}
 
 	/* use */
@@ -66,6 +46,6 @@ namespace CNGE {
 	}
 
 	Texture::~Texture() {
-		destroy();
+		glDeleteTextures(1, &texture);
 	}
 }

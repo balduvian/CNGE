@@ -2,7 +2,7 @@
 #ifndef GAME_GAME_RESOURCES
 #define GAME_GAME_RESOURCES
 
-#include "cnge8/engine/entities/texture/texture.h"
+#include "cnge8/engine/entities/texture/imageTexture.h"
 #include "cnge8/load/resourceBundle.h"
 #include "cnge8/audio/sound.h"
 
@@ -16,11 +16,12 @@ namespace Game {
 		static Rect rect;
 		static TextureShader textureShader;
 		static ColorShader colorShader;
-		static CNGE::Texture testTexture;
+		static CNGE::ImageTexture<CNGE::Texture> testTexture;
 		static CNGE::Sound testSound;
 
 		static CNGE::ResourceBundle loadScreenResources;
 		static CNGE::ResourceBundle gameResources;
+		static CNGE::ResourceBundle testResources;
 	};
 }
 

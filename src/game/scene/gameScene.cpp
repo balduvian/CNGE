@@ -2,11 +2,9 @@
 #include "gameScene.h"
 
 #include "cnge8/math/math.h"
-#include "cnge8/engine/transform.h"
-#include "gameResources.h"
+#include "../gameResources.h"
 
 #include <iostream>
-#include <game/tetris/rotation.h>
 
 namespace Game {
 	const CNGE::Color GameScene::skekColor = CNGE::Color(0x31d433);

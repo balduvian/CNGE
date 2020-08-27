@@ -16,7 +16,7 @@ namespace Game {
 
 		auto getUniforms() -> void override;
 
-		auto giveParams(f32, f32, f32, f32, f32[]) -> void;
+		auto giveParams(f32, f32, f32, f32, const f32[]) -> void;
 
 		auto giveParams(f32, f32, f32, f32) -> void;
 

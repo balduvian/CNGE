@@ -43,7 +43,7 @@ namespace CNGE {
 		} else {
 			/* update the loading screen */
 			loadScreen->update(input, timing);
-			loadScreen->render(bundle->getCurrent(), bundle->getAlong(), bundle->getTotal());
+			loadScreen->render(bundle->getAlong(), bundle->getTotal());
 		}
 
 		return true;

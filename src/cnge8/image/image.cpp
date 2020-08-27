@@ -12,7 +12,7 @@
 #include "imageUtil.h"
 
 namespace CNGE {
-	Image::Image(u32 width, u32 height, u32* pixels)
+	Image::Image(u32 width, u32 height, u8* pixels)
 		: width(width), height(height), pixels(pixels) {}
 
 	Image::Image(Image&& other) : width(other.width), height(other.height), pixels(other.pixels) {
@@ -24,6 +24,8 @@ namespace CNGE {
 		height = other.height;
 		pixels = other.pixels;
 		other.pixels = nullptr;
+
+		return *this;
 	}
 
 	Image::~Image() {
@@ -46,7 +48,7 @@ namespace CNGE {
 
 		auto width = png_get_image_width(png, info);
 		auto height = png_get_image_height(png, info);
-		auto* pixels = new u32[static_cast<unsigned long long>(width) * height];
+		auto* pixels = new u8[u64(width) * height * 4];
 
 		/* convert the image into 8 bit rgba */
 		const auto colorType = png_get_color_type(png, info);
@@ -79,14 +81,11 @@ namespace CNGE {
 		for (auto j = 0u; j < height; ++j) {
 			png_read_row(png, pngRow, nullptr);
 
-			/* merge bytes into ints */
 			for (auto i = 0u; i < width; ++i) {
-				const auto red = pngRow[i * 4];
-				const auto gre = pngRow[i * 4 + 1];
-				const auto blu = pngRow[i * 4 + 2];
-				const auto alp = pngRow[i * 4 + 3];
-
-				pixels[Util::pos(i, j, width)] = Util::pix(red, gre, blu, alp);
+				pixels[(j * width + i) * 4    ] = pngRow[i * 4    ];
+				pixels[(j * width + i) * 4 + 1] = pngRow[i * 4 + 1];
+				pixels[(j * width + i) * 4 + 2] = pngRow[i * 4 + 2];
+				pixels[(j * width + i) * 4 + 3] = pngRow[i * 4 + 3];
 			}
 		}
 
@@ -115,71 +114,9 @@ namespace CNGE {
 		/* Return control to the setjmp point */
 		longjmp(myerr->setjmp_buffer, 1);
 	}
-	
-	auto Image::fromJPG(std::filesystem::path& path) -> Image {
-		struct jpeg_decompress_struct cinfo;
-		struct my_error_mgr jerr;
-
-		/* More stuff */
-		FILE* file;      /* source file */
-
-		_wfopen_s(&file, path.c_str(), L"rb");
-
-		if (!file) return makeEmpty();
-
-		/* We set up the normal JPEG error routines, then override error_exit. */
-		cinfo.err = jpeg_std_error(&jerr.pub);
-		jerr.pub.error_exit = my_error_exit;
-		/* Establish the setjmp return context for my_error_exit to use. */
-		if (setjmp(jerr.setjmp_buffer)) {
-
-			jpeg_destroy_decompress(&cinfo);
-			fclose(file);
-
-			return makeEmpty();
-		}
-
-		jpeg_create_decompress(&cinfo);
-
-		jpeg_stdio_src(&cinfo, file);
-
-		(void)jpeg_read_header(&cinfo, TRUE);
-
-		(void)jpeg_start_decompress(&cinfo);
-
-		auto channels = cinfo.output_components;
-		
-		auto row_stride = cinfo.output_width * channels;
-
-		auto width = cinfo.output_width;
-		auto height = cinfo.output_height;
-		auto* pixels = new u32[u64(width) * height];
-
-		auto counter = 0llu;
-
-		auto bufferRow = std::unique_ptr<u8>(new u8[row_stride]);
-		auto* row = bufferRow.get();
-
-		while (cinfo.output_scanline < cinfo.output_height) {
-			jpeg_read_scanlines(&cinfo, &row, 1);
-			
-			for (auto i = 0u; i < width; ++i)
-				pixels[i + counter] = Util::pix(row[i * channels], row[i * channels + 1], row[i * channels + 2], 0xff);
-
-			counter += width;
-		}
-
-		jpeg_finish_decompress(&cinfo);
-
-		/* cleanup */
-		jpeg_destroy_decompress(&cinfo);
-		fclose(file);
-
-		return Image(width, height, pixels);
-	}
 
 	auto Image::makeSheet(u32 width, u32 height) -> Image {
-		return Image(width, height, new u32[static_cast<unsigned long long>(width) * height]());
+		return Image(width, height, new u8[u64(width) * height * 4]());
 	}
 
 	auto Image::makeEmpty() -> Image {
@@ -188,7 +125,7 @@ namespace CNGE {
 
 	auto Image::resize(u32 width, u32 height) -> void {
 		delete[] pixels;
-		this->pixels = new u32[width * height];
+		this->pixels = new u8[width * height * 4];
 
 		this->width = width;
 		this->height = height;
@@ -202,7 +139,7 @@ namespace CNGE {
 		return height;
 	}
 
-	auto Image::getPixels() const -> u32* {
+	auto Image::getPixels() const -> u8* {
 		return pixels;
 	}
 

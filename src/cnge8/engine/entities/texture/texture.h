@@ -8,34 +8,23 @@
 #include "textureParams.h"
 
 namespace CNGE {
-	class Texture : public Resource {
+	class Texture {
 	public:
-		Texture(const char*, TextureParams = TextureParams());
+		Texture(u32, u32, u8*, TextureParams = TextureParams());
+		~Texture();
 
 		const static float DEFAULT_TILE_VALUES[4];
 
 		auto bind(i32 = 0) -> void;
 		auto get() -> u32;
 
-		~Texture();
-
 	protected:
 		static float tileValues[4];
 
-		virtual auto  customGather() -> LoadError override;
-		virtual auto customProcess() -> LoadError override;
-		virtual auto customDiscard() -> LoadError override;
-		virtual auto  customUnload() -> LoadError override;
-
-		u32 width;
-		u32 height;
+		u32 width, height;
 
 	private:
-		const char* assetPath;
-		Image assetImage;
-
 		u32 texture;
-
 		i32 horzWrap, vertWrap, minFilter, magFilter;
 	};
 }

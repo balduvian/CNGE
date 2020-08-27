@@ -5,7 +5,8 @@
 #include "cnge8/audio/audioDevice.h"
 
 #include "gameResources.h"
-#include "gameScene.h"
+#include "game/scene/gameScene.h"
+#include "game/scene/testScene.h"
 #include "gameLoadScreen.h"
 
 auto main(int argc, char** argv) -> int {
@@ -18,8 +19,6 @@ auto main(int argc, char** argv) -> int {
 	CNGE::AudioDevices::init();
 	CNGE::AudioDevices::getDefaultOutputDevice()->setActive();
 
-	/* open enables */
-	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_CLIP_DISTANCE0);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -29,7 +28,7 @@ auto main(int argc, char** argv) -> int {
 
 	auto sceneManager = CNGE::SceneManager();
 
-	sceneManager.start(window.getInput(), std::make_unique<Game::GameScene>(), std::make_unique<Game::GameLoadScreen>());
+	sceneManager.start(window.getInput(), std::make_unique<Game::TestScene>(), std::make_unique<Game::GameLoadScreen>());
 
 	// start the gameloop
 	auto loop = CNGE::Loop();

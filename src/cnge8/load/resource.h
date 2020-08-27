@@ -61,6 +61,9 @@ namespace CNGE {
 
 		auto needsUnload() -> bool;
 		auto unload(LoadError&) -> void;
+
+		auto getGatherStatus() -> GatherStatus;
+		auto getProcessStatus() -> ProcessStatus;
 	};
 }
 

@@ -21,7 +21,7 @@ namespace Game {
 		camera.update();
 	}
 
-	auto GameLoadScreen::render(CNGE::Resource* current, i32 along, i32 total) -> void {
+	auto GameLoadScreen::render(i32 along, i32 total) -> void {
 		GameResources::colorShader.enable();
 		GameResources::colorShader.giveColor(backgroundColor);
 		GameResources::rect.render();

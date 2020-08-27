@@ -10,16 +10,15 @@
 namespace CNGE {
 	class Image {
 	private:
-		Image(u32, u32, u32*);
+		Image(u32, u32, u8*);
 
 		u32 width;
 		u32 height;
 		
-		u32* pixels;
+		u8* pixels;
 		
 	public:
 		static auto fromPNG(std::filesystem::path&) -> Image;
-		static auto fromJPG(std::filesystem::path&) -> Image;
 
 		static auto makeSheet(u32, u32) -> Image;
 		static auto makeEmpty() -> Image;
@@ -33,7 +32,7 @@ namespace CNGE {
 		auto getWidth() const -> u32;
 		auto getHeight() const -> u32;
 		
-		auto getPixels() const -> u32*;
+		auto getPixels() const -> u8*;
 
 		auto write(std::filesystem::path&) const -> void;
 

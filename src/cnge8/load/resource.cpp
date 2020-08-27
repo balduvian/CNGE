@@ -1,4 +1,6 @@
+
 #include <iostream>
+#include <functional>
 
 #include "resource.h"
 
@@ -26,7 +28,7 @@ namespace CNGE {
 	}
 
 	auto Resource::finishedGathering() -> bool {
-		return gatherStatus != GatherStatus::GATHERING;
+		return gatherStatus == GatherStatus::GATHERED;
 	}
 
 	auto Resource::quickGather(LoadError& error) -> void {
@@ -39,9 +41,11 @@ namespace CNGE {
 		error.setStage(LoadError::LoadStage::GATHER);
 		gatherStatus = GatherStatus::GATHERING;
 
-		gatherThread = std::thread([this, &error] {
-			error.takeOver(customGather());
-			gatherStatus = error ? GatherStatus::UNGATHERED : GatherStatus::GATHERED;
+		auto errorRef = &error;
+
+		gatherThread = std::thread([this, errorRef] {
+			errorRef->takeOver(customGather());
+			gatherStatus = GatherStatus::GATHERED;
 		});
 	}
 
@@ -82,8 +86,8 @@ namespace CNGE {
 	}
 
 	auto Resource::destroy() -> void {
-		if (processStatus == ProcessStatus::PROCESSED) customUnload();
-		if (gatherStatus == GatherStatus::UNGATHERED) customDiscard();
+		if (needsUnload()) customUnload();
+		if (needsDiscard()) customDiscard();
 	}
 
 	/* default gather and discard for resources with hasGather = false */
@@ -94,5 +98,13 @@ namespace CNGE {
 
 	auto Resource::customDiscard() -> LoadError {
 		return LoadError::none();
+	}
+
+	auto Resource::getProcessStatus() -> ProcessStatus {
+		return processStatus;
+	}
+
+	auto Resource::getGatherStatus() -> GatherStatus {
+		return gatherStatus;
 	}
 }

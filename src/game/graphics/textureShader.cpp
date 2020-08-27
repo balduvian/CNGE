@@ -10,7 +10,7 @@ namespace Game {
 		texModifLoc = getUniform("texModif");
 	}
 
-	auto TextureShader::giveParams(f32 r, f32 g, f32 b, f32 a, f32 texModif[]) -> void {
+	auto TextureShader::giveParams(f32 r, f32 g, f32 b, f32 a, const f32 texModif[]) -> void {
 		giveVector4(colorLoc, r, g, b, a);
 		giveVector4(texModifLoc, texModif);
 	}

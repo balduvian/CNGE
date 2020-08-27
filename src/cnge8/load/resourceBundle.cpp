@@ -2,6 +2,7 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <GL/glew.h>
 
 #include "resourceBundle.h"
 
@@ -52,12 +53,11 @@ namespace CNGE {
 
 	auto ResourceBundle::doGather(Resource* resource, bool& skip, LoadError& error) -> bool {
 		if (resource->isGathering())
+			return skip = false, false;
+		else
 			if (resource->finishedGathering())
 				return resource->joinThread(), error;
-			else
-				return skip = false, false;
-		else
-			if (resource->needsGather())
+			else if (resource->needsGather())
 				return skip = false, resource->gather(error), false;
 			else
 				return false;
@@ -71,19 +71,18 @@ namespace CNGE {
 	}
 
 	auto ResourceBundle::doProcess(Resource* resource, bool& skip, LoadError& error) -> bool {
-		if(resource->needsGather()) return skip = false, resource->process(error), error;
-		return false;
+		return resource->needsProcess() ? skip = false, resource->process(error), error : false;
 	}
 
 	/* unload */
 
 	auto ResourceBundle::doUnload(Resource* resource, LoadError& error) -> bool {
-		if(resource->needsProcess()) return resource->unload(error), error;
+		if(resource->needsUnload()) return resource->unload(error), error;
 		return false;
 	}
 
 	auto ResourceBundle::doUnload(Resource* resource, bool& skip, LoadError& error) -> bool {
-		if(resource->needsGather()) return skip = false, resource->unload(error), error;
+		if(resource->needsUnload()) return skip = false, resource->unload(error), error;
 		return false;
 	}
 
@@ -103,13 +102,15 @@ namespace CNGE {
 		auto skip = true;
 		auto error = LoadError();
 
-		for (; !done() && skip; ++resourcesIter) {
+		while(resourcesIter != resources.end() && skip) {
 			error.setOccured(getAlong());
 
 			if(doGather(*resourcesIter, skip, error)) errorExit(error);
 			if (skip) {
 				if(doProcess(*resourcesIter, skip, error)) errorExit(error);
 				if(clean && doDiscard(*resourcesIter, skip, error)) errorExit(error);
+
+				++resourcesIter;
 			}
 		}
 	}
@@ -118,11 +119,13 @@ namespace CNGE {
 		auto skip = true;
 		auto error = LoadError();
 
-		for (; !done() && skip; ++resourcesIter) {
+		while (resourcesIter != resources.end() && skip) {
 			error.setOccured(getAlong());
 
 			if(doUnload(*resourcesIter, skip, error)) errorExit(error);
 			if(clean && doDiscard(*resourcesIter, skip, error)) errorExit(error);
+
+			if (skip) ++resourcesIter;
 		}
 	}
 

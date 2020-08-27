@@ -50,7 +50,7 @@ namespace CNGE {
 
 		// add the rest of the custom attributes
 		for (auto i = 0; i < attribCount; ++i) {
-			attribs[i].deleteBuffers();
+			attribs[i].genBuffers();
 			add_attribute(attribs[i], i + 1);
 		}
 
@@ -101,16 +101,12 @@ namespace CNGE {
 	/// internally adds a vertex attribute to this vao
 		/// creates and returns the opengl buffer
 	auto VAO::add_attribute(Attribute& attrib, u32 location) -> void {
-		// make the attribute buffer current
 		glBindBuffer(GL_ARRAY_BUFFER, attrib.buffer);
 
-		// draw the float array from the attribute into the buffer
 		glBufferData(GL_ARRAY_BUFFER, attrib.size, attrib.data, GL_STATIC_DRAW);
 
-		// tell opengl where and how to use the data
 		glVertexAttribPointer(location, attrib.perVertex, GL_FLOAT, false, 0, nullptr);
 
-		// activate the attribute
 		glEnableVertexAttribArray(location);
 	}
 

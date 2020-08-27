@@ -15,10 +15,7 @@ namespace CNGE {
 		f32* calculatedPositions;
 
 	public:
-		TileSheet(const char*, const u32, const i32*, TextureParams = TextureParams());
-
-		auto customProcess() -> LoadError override;
-		auto customUnload() -> LoadError override;
+		TileSheet(u32, u32, u8*, TextureParams, u32, i32*);
 
 		f32* getSheet(u32);
 

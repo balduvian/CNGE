@@ -2,12 +2,9 @@
 #include "tileSheet.h"
 
 namespace CNGE {
-	TileSheet::TileSheet(const char* path, const u32 numPositions, const i32* positions, TextureParams params)
-		: Texture(path, params), numPositions(numPositions), inputPositions(positions), calculatedPositions() {}
-
-	auto TileSheet::customProcess() -> LoadError {
-		auto result = Texture::customProcess();
-
+	TileSheet::TileSheet(u32 width, u32 height, u8* pixels, TextureParams params, u32 numPositions, i32* positions)
+		: Texture(width, height, pixels, params), numPositions(numPositions), inputPositions(positions), calculatedPositions()
+	{
 		calculatedPositions = new f32[numPositions * 4];
 
 		auto widthFraction = 1._f32 / width;
@@ -20,16 +17,7 @@ namespace CNGE {
 			calculatedPositions[i * 4 + 3] = heightFraction * inputPositions[i * 4 + 3];
 		}
 
-		return result;
-	}
-
-	auto TileSheet::customUnload() -> LoadError {
-		auto result = Texture::customUnload();
-
-		delete[] calculatedPositions;
-		calculatedPositions = nullptr;
-
-		return result;
+		delete[] inputPositions;
 	}
 
 	f32* TileSheet::getSheet(u32 tile) {
@@ -42,6 +30,7 @@ namespace CNGE {
 	}
 
 	TileSheet::~TileSheet() {
-		delete[] inputPositions;
+		delete[] calculatedPositions;
+		calculatedPositions = nullptr;
 	}
 }

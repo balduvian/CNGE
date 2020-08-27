@@ -17,7 +17,7 @@ namespace Game {
 
 		auto update(CNGE::Input*, CNGE::Timing*) -> void override;
 
-		auto render(CNGE::Resource*, i32, i32) -> void override;
+		auto render(i32, i32) -> void override;
 
 	private:
 		const static CNGE::Color backgroundColor;

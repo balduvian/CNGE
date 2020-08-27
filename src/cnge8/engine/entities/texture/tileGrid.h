@@ -15,11 +15,11 @@ namespace CNGE {
 		f32 widthFraction;
 		f32 heightFraction;
 
-	public:
-		TileGrid(const char*, u32, u32, TextureParams = TextureParams());
-		TileGrid(const char*, u32, TextureParams = TextureParams());
+		auto init() -> void;
 
-		auto customProcess() -> LoadError override;
+	public:
+		TileGrid(u32, u32, u8*, TextureParams, u32, u32);
+		TileGrid(u32, u32, u8*, TextureParams, u32);
 
 		f32* getSheet(u32, u32);
 		f32* getSheet(u32);

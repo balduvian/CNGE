@@ -56,7 +56,8 @@ namespace CNGE {
 			auto status = GLint();
 			glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 
-			if (status != GL_TRUE) return printShaderError(shader), false;
+			if (status != GL_TRUE)
+				return printShaderError(shader), false;
 
 			return shader;
 		};
@@ -110,7 +111,7 @@ namespace CNGE {
 		auto len_return = i32();
 		glGetShaderInfoLog(shader, err_size, &len_return, err_buffer);
 
-		std::cout << err_buffer << std::endl;
+		std::cout << "CNGE SHADER ERROR | " << err_buffer << std::endl;
 	}
 
 	/*
