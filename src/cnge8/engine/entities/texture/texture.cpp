@@ -18,7 +18,7 @@ namespace CNGE {
 	 * @param params
 	 */
 	Texture::Texture(u32 width, u32 height, u8* pixels, TextureParams params)
-		: width(), height(), texture(),
+		: width(width), height(height), texture(),
 		horzWrap(params.horzWrap), vertWrap(params.vertWrap),
 		minFilter(params.minFilter), magFilter(params.magFilter) {
 

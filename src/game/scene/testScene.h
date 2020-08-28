@@ -5,6 +5,7 @@
 #ifndef CNGE_8_2_TESTSCENE_H
 #define CNGE_8_2_TESTSCENE_H
 
+#include <cnge8/util/timer.h>
 #include "cnge8/scene/scene.h"
 #include "cnge8/util/aspect.h"
 #include "cnge8/engine/camera.h"
@@ -15,6 +16,8 @@ namespace Game {
 		bool pressedSpace;
 		CNGE::Aspect aspect;
 		CNGE::Camera camera;
+
+		CNGE::Timer timer;
 
 	public:
 		TestScene();

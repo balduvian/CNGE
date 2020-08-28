@@ -1,31 +1,42 @@
 
+#include <iostream>
 #include "tileGrid.h"
 
 namespace CNGE {
-	TileGrid::TileGrid(u32 width, u32 height, u8* pixels, TextureParams params, u32 tilesWide, u32 tilesTall)
-	: Texture(width, height, pixels, params), tilesWide(tilesWide), tilesTall(1), widthFraction(), heightFraction() {}
+	TileGrid::TileGrid(u32 width, u32 height, u8* pixels, TextureParams params, u32 tilesWide, u32 tilesTall, u32 gap)
+	: Texture(width, height, pixels, params), tilesWide(tilesWide), tilesTall(tilesTall), gap(gap) {}
 
-	TileGrid::TileGrid(u32 width, u32 height, u8* pixels, TextureParams params, u32 tilesWide)
-	: Texture(width, height, pixels, params), tilesWide(tilesWide), tilesTall(1), widthFraction(), heightFraction() {}
+	TileGrid::TileGrid(u32 width, u32 height, u8* pixels, TextureParams params, u32 tilesWide, u32 gap)
+	: Texture(width, height, pixels, params), tilesWide(tilesWide), tilesTall(1), gap(gap) {}
 
-	auto TileGrid::init() -> void {
-		widthFraction = 1._f32 / tilesWide;
-		heightFraction = 1._f32 / tilesTall;
-	}
+	/*
+	 * [0] width
+	 * [1] height
+	 * [2] x
+	 * [3] y
+	 */
 
 	f32* TileGrid::getSheet(u32 x, u32 y) {
-		tileValues[0] = widthFraction;
-		tileValues[1] = heightFraction;
-		tileValues[2] = x * widthFraction;
-		tileValues[3] = y * heightFraction;
+		/* get the width in pixels of the image minus each internal gap, then divide by tiles to get tile size */
+		auto tileWidth = (width - (gap * (tilesWide - 1))) / tilesWide;
+		auto tileHeight = (height - (gap * (tilesTall - 1))) / tilesTall;
+
+		tileValues[0] = f32(tileWidth) / width;
+		tileValues[1] = f32(tileHeight) / height;
+		tileValues[2] = x * f32(tileWidth + gap) / width;
+		tileValues[3] = y * f32(tileHeight + gap) / height;
+
+		//std::cout << tileValues[0] << " " << tileValues[1] << " " << tileValues[2] << " " << tileValues[3] << std::endl;
 
 		return tileValues;
 	}
 
 	f32* TileGrid::getSheet(u32 x) {
-		tileValues[0] = widthFraction;
+		auto tileWidth = (width - (gap * (tilesWide - 1))) / tilesWide;
+
+		tileValues[0] = f32(tileWidth) / width;
 		tileValues[1] = 1;
-		tileValues[2] = x * widthFraction;
+		tileValues[2] = x * f32(tileWidth + gap) / width;
 		tileValues[3] = 0;
 
 		return tileValues;

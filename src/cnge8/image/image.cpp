@@ -170,14 +170,8 @@ namespace CNGE {
 		
 		/* convert image back into bytes */
 		for (auto j = 0u; j < height; ++j) {
-			for (auto i = 0u; i < width; ++i) {
-				const auto pixel = pixels[Util::pos(i, j, width)];
-
-				row[i * 4    ] = Util::red(pixel);
-				row[i * 4 + 1] = Util::gre(pixel);
-				row[i * 4 + 2] = Util::blu(pixel);
-				row[i * 4 + 3] = Util::alp(pixel);
-			}
+			for (auto i = 0u; i < width * 4; ++i)
+				row[i]  = pixels[j * width * 4 + i];
 
 			png_write_row(png, row);
 		}

@@ -20,7 +20,7 @@ namespace CNGE {
 	class ImageTexture : public Resource {
 	public:
 		ImageTexture(const char* path, TextureParams textureParams, Parameters ...inputParameters)
-			: Resource(true), texture(nullptr), assetPath(path), assetImage(Image::makeEmpty()), parameters(std::make_tuple(inputParameters...))
+			: Resource(true), texture(nullptr), textureParams(textureParams), assetPath(path), assetImage(Image::makeEmpty()), parameters(std::make_tuple(inputParameters...))
 	{}
 
 	auto get() -> T* {
