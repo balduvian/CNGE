@@ -5,7 +5,7 @@
 #ifndef CNGE_8_2_TETRISBOARD_H
 #define CNGE_8_2_TETRISBOARD_H
 
-#include "cnge8/types.h"
+#include "cnge/types.h"
 
 namespace Game {
 	class TetrisBoard {

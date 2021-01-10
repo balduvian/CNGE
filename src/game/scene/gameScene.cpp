@@ -1,7 +1,7 @@
 
 #include "gameScene.h"
 
-#include "cnge8/math/math.h"
+#include "cnge/math/math.h"
 #include "../gameResources.h"
 
 #include <iostream>

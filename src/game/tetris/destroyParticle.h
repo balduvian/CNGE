@@ -5,9 +5,9 @@
 #ifndef CNGE_8_2_DESTROYPARTICLE_H
 #define CNGE_8_2_DESTROYPARTICLE_H
 
-#include "cnge8/engine/camera.h"
-#include "cnge8/util/color.h"
-#include "cnge8/types.h"
+#include "cnge/engine/camera.h"
+#include "cnge/util/color.h"
+#include "cnge/types.h"
 
 namespace Game {
 	class DestroyParticle {

@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "cnge8/types.h"
+#include "cnge/types.h"
 #include "piece.h"
 
 namespace Game {

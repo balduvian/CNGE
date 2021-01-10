@@ -3,7 +3,7 @@
 //
 
 #include "rotation.h"
-#include "cnge8/math/math.h"
+#include "cnge/math/math.h"
 
 namespace Game {
 	/* 2d coordinates flattened into a 1d index */

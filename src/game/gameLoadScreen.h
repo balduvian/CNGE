@@ -2,11 +2,11 @@
 #ifndef GAME_GAME_LOAD_SCREEN
 #define GAME_GAME_LOAD_SCREEN
 
-#include "cnge8/load/loadScreen.h"
-#include "cnge8/util/aspect.h"
-#include "cnge8/util/color.h"
-#include "cnge8/engine/camera.h"
-#include "cnge8/engine/loop/timing.h"
+#include "cnge/load/loadScreen.h"
+#include "cnge/util/aspect.h"
+#include "cnge/util/color.h"
+#include "cnge/engine/camera.h"
+#include "cnge/engine/loop/timing.h"
 
 namespace Game {
 	class GameLoadScreen : public CNGE::LoadScreen {

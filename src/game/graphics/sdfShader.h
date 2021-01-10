@@ -2,8 +2,8 @@
 #ifndef GAME_SDF_SHADER
 #define GAME_SDF_SHADER
 
-#include "cnge8/engine/entities/shader/shader.h"
-#include "../../cnge8/types.h"
+#include "cnge/engine/entities/shader/shader.h"
+#include "cnge/types.h"
 
 namespace Game {
 	class SDFShader : public CNGE::Shader {

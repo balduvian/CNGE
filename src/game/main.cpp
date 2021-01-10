@@ -1,15 +1,14 @@
 
 #include <functional>
-#include <cnge8/scene/sceneManager.h>
 
-#include "cnge8/audio/audioDevice.h"
+#include "cnge/scene/sceneManager.h"
+#include "cnge/engine/audio/audioDevice.h"
 
 #include "gameResources.h"
 #include "game/scene/gameScene.h"
-#include "game/scene/testScene.h"
 #include "gameLoadScreen.h"
 
-auto main(int argc, char** argv) -> int {
+auto main() -> int {
 	/* init glfw and opengl */
 	CNGE::Window::init();
 	auto window = CNGE::Window(4, 6, true, true, "CNGE Test Demo", CNGE::Window::getPrimaryMonitor(), false, true);
@@ -23,17 +22,17 @@ auto main(int argc, char** argv) -> int {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// get load screen ready
-	Game::GameResources::loadScreenResources.setup().quickUpdateLoad(true);
+	auto loadScreenLoader = CNLL::Loader();
+	loadScreenLoader.setup(Game::GameResources::loadScreenResources.size());
+	for (auto &resource : Game::GameResources::loadScreenResources) loadScreenLoader.giveLoadResource(resource);
+	loadScreenLoader.quickLoad();
 
 	auto sceneManager = CNGE::SceneManager();
-
-	sceneManager.start(window.getInput(), std::make_unique<Game::TestScene>(), std::make_unique<Game::GameLoadScreen>());
+	sceneManager.start(window.getInput(), std::make_unique<Game::GameScene>(), std::make_unique<Game::GameLoadScreen>());
 
 	// start the gameloop
 	auto loop = CNGE::Loop();
-
-	loop.begin([&window]() { return window.getShouldClose(); }, [&](CNGE::Timing* timing) {
+	loop.begin([&window]() { return window.getShouldClose(); }, [&](CNGE::Timing *timing) {
 		window.poll();
 
 		sceneManager.update(window.getInput(), timing);

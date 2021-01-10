@@ -21,6 +21,9 @@ void main() {
 
 	alpha = clamp(alpha, 0, 1);
 
+	vec4 inverseColor = vec4((1 - inColor).xyz, 0.75);
+	vec4 resultColor = mix(inverseColor, inColor, alpha);
+
 	// the output uses alpha to determine if it's shown
-	color = vec4(inColor.x, inColor.y, inColor.z, alpha * inColor.w);
+	color = resultColor;//vec4(inColor.x, inColor.y, inColor.z, alpha * inColor.w);
 }

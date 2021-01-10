@@ -5,7 +5,7 @@
 #ifndef CNGE_8_2_ANIMATION_H
 #define CNGE_8_2_ANIMATION_H
 
-#include "cnge8/util/timer.h"
+#include "cnge/util/timer.h"
 
 #include <functional>
 

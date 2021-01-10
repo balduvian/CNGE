@@ -2,8 +2,6 @@
 #include "gameLoadScreen.h"
 #include "gameResources.h"
 
-#include "../cnge8/engine/transform.h"
-
 namespace Game {
 	const CNGE::Color GameLoadScreen::backgroundColor = CNGE::Color(234, 56, 100);
 	const CNGE::Color GameLoadScreen::mainColor = backgroundColor.invert();
@@ -21,12 +19,23 @@ namespace Game {
 		camera.update();
 	}
 
-	auto GameLoadScreen::render(i32 along, i32 total) -> void {
+	auto GameLoadScreen::render(i32 completed, i32 total) -> void {
+		auto along = completed / (f32)total;
+
+		auto screenWidth = aspect.getGameWidth();
+		auto screenHeight = aspect.getGameHeight();
+
+		auto barWidth = 10_f32;
+		auto barHeight = 3_f32;
+
+		auto barX = screenWidth / 2 - barWidth / 2;
+		auto barY = screenHeight / 2 - barHeight / 2;
+
 		GameResources::colorShader.enable();
 		GameResources::colorShader.giveColor(backgroundColor);
 		GameResources::rect.render();
 
-		GameResources::colorShader.enable(CNGE::Transform::toModel(2, 2, 0, 6, 5), camera.getProjview());
+		GameResources::colorShader.enable(CNGE::Transform::toModel(barX, barY, barWidth * along, barHeight), camera.getProjview());
 		GameResources::colorShader.giveColor(mainColor);
 		GameResources::rect.render();
 	}

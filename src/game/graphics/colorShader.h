@@ -2,9 +2,9 @@
 #ifndef GAME_COLORSHADER
 #define GAME_COLORSHADER
 
-#include "cnge8/engine/entities/shader/shader.h"
-#include "../../cnge8/types.h"
-#include "../../cnge8/util/color.h"
+#include "cnge/engine/entities/shader/shader.h"
+#include "cnge/types.h"
+#include "cnge/util/color.h"
 
 namespace Game {
 	class ColorShader : public CNGE::Shader {

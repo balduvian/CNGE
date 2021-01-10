@@ -5,7 +5,7 @@
 #ifndef CNGE_8_2_PIECE_H
 #define CNGE_8_2_PIECE_H
 
-#include "cnge8/types.h"
+#include "cnge/types.h"
 
 #include "rotation.h"
 

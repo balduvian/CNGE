@@ -2,7 +2,7 @@
 #ifndef GAME_RECT
 #define GAME_RECT
 
-#include "cnge8/engine/entities/vao/vao.h"
+#include "cnge/engine/entities/vao/vao.h"
 
 namespace Game {
 	/// a texture enabled rect with

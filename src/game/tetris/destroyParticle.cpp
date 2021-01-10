@@ -2,7 +2,7 @@
 // Created by Emmet on 8/22/2020.
 //
 
-#include "cnge8/math/math.h"
+#include "cnge/math/math.h"
 
 #include "destroyParticle.h"
 #include "vector.h"

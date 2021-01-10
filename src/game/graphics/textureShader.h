@@ -2,8 +2,8 @@
 #ifndef GAME_TEXTURE_SHADER
 #define GAME_TEXTURE_SHADER
 
-#include "cnge8/engine/entities/shader/shader.h"
-#include "../../cnge8/types.h"
+#include "cnge/engine/entities/shader/shader.h"
+#include "cnge/types.h"
 
 namespace Game {
 	class TextureShader : public CNGE::Shader {

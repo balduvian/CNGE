@@ -2,12 +2,12 @@
 #ifndef GAME_GAME_SCENE 
 #define GAME_GAME_SCENE
 
-#include "cnge8/engine/camera.h"
-#include "cnge8/util/aspect.h"
-#include "cnge8/engine/loop/timing.h"
-#include "cnge8/scene/scene.h"
-#include "cnge8/util/color.h"
-#include "cnge8/util/timer.h"
+#include "cnge/engine/camera.h"
+#include "cnge/util/aspect.h"
+#include "cnge/engine/loop/timing.h"
+#include "cnge/scene/scene.h"
+#include "cnge/util/color.h"
+#include "cnge/util/timer.h"
 
 #include <memory>
 #include <random>

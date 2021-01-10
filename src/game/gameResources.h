@@ -2,11 +2,10 @@
 #ifndef GAME_GAME_RESOURCES
 #define GAME_GAME_RESOURCES
 
-#include <cnge8/engine/entities/texture/tileGrid.h>
-#include <cnge8/engine/entities/font/font.h>
-#include "cnge8/engine/entities/texture/imageTexture.h"
-#include "cnge8/load/resourceBundle.h"
-#include "cnge8/audio/sound.h"
+#include "cnge/engine/entities/texture/tileGrid.h"
+#include "cnge/engine/entities/texture/imageTexture.h"
+#include "cnge/engine/entities/sound/sound.h"
+#include "cnge/load/resource.h"
 
 #include "graphics/rect.h"
 #include "graphics/colorShader.h"
@@ -23,11 +22,9 @@ namespace Game {
 		static CNGE::ImageTexture<CNGE::Texture> testTexture;
 		static CNGE::ImageTexture<CNGE::TileGrid, u32, u32, u32> testTileGrid;
 		static CNGE::Sound testSound;
-		static CNGE::Font cuteFont;
 
-		static CNGE::ResourceBundle loadScreenResources;
-		static CNGE::ResourceBundle gameResources;
-		static CNGE::ResourceBundle testResources;
+		static std::vector<CNLL::Resource*> loadScreenResources;
+		static std::vector<CNLL::Resource*> gameResources;
 	};
 }
 
