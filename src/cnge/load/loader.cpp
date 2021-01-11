@@ -2,6 +2,7 @@
 // Created by Emmet on 11/27/2020.
 //
 
+#include <iostream>
 #include "loader.h"
 
 namespace CNLL {
@@ -17,6 +18,7 @@ namespace CNLL {
 
         total = numResources;
         completed = 0;
+        error = false;
     }
 
 	auto Loader::setup(u32 numLoadResources, u32 numUnloadResources) -> void {
@@ -27,6 +29,7 @@ namespace CNLL {
 
 		total = numLoadResources + numUnloadResources;
 		completed = 0;
+		error = false;
 	}
 
     /**
@@ -63,10 +66,15 @@ namespace CNLL {
         gatherThread = std::thread([this]() {
 	        /* only gather resources that are not already loaded, and not already gathered */
             for (auto *resource : loadResources)
-                if (!resource->getGathered() && !resource->getLoaded()) resource->gather();
+                if (!resource->getGathered() && !resource->getLoaded()) {
+                	if (!resource->gather()) {
+                		error = true;
+                		break;
+                	}
+                }
 
             /* discard all the gathered resources ready for unloading */
-	        for (auto *resource : unloadResources)
+	        if (!error) for (auto *resource : unloadResources)
 		        if (resource->getGathered()) resource->discard();
         });
     }
@@ -75,25 +83,32 @@ namespace CNLL {
      * for loading, call this in a gameloop until getDone() returns true
      */
     auto Loader::update() -> void {
-        /* load all currently gathered resources */
-        for (auto *resource : loadResources) {
-            if (resource->getGathered() && !resource->getLoaded()) {
-                resource->load();
-                resource->discard();
-                ++completed;
-            }
-        }
+    	if (error) {
+    		if (gatherThread.joinable()) gatherThread.join();
+    		std::cout << "LOADING ERROR" << std::endl;
+    		exit(-2);
 
-        /* unload all currently discarded resources */
-        for (auto *resource : unloadResources) {
-        	if (!resource->getGathered()) {
-        		resource->unload();
-        		++completed;
-        	}
-        }
+    	} else {
+		    /* load all currently gathered resources */
+		    for (auto *resource : loadResources) {
+			    if (resource->getGathered() && !resource->getLoaded()) {
+				    resource->load();
+				    resource->discard();
+				    ++completed;
+			    }
+		    }
 
-        /* if we're done stop the gather thread */
-        if (getDone() && gatherThread.joinable()) gatherThread.join();
+		    /* unload all currently discarded resources */
+		    for (auto *resource : unloadResources) {
+			    if (!resource->getGathered()) {
+				    resource->unload();
+				    ++completed;
+			    }
+		    }
+
+		    /* if we're done stop the gather thread */
+		    if (getDone() && gatherThread.joinable()) gatherThread.join();
+	    }
     }
 
     /**

@@ -12,6 +12,8 @@
 #include "imageUtil.h"
 
 namespace CNGE {
+	Image::Image(): pixels(nullptr) {}
+
 	Image::Image(u32 width, u32 height, u8* pixels)
 		: width(width), height(height), pixels(pixels) {}
 
@@ -32,13 +34,13 @@ namespace CNGE {
 		delete[] pixels;
 	}
 
-	auto Image::fromPNG(std::filesystem::path& path) -> Image {
+	auto Image::fromPNG(const char *filepath) -> std::unique_ptr<Image> {
 		auto* file = static_cast<FILE*>(nullptr);
 
 		/* open the file of the image */
-		_wfopen_s(&file, path.c_str(), L"rb");
+		fopen_s(&file, filepath, "rb");
 
-		if (!file) return makeEmpty();
+		if (!file) return nullptr;
 
 		auto* png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 		auto* info = png_create_info_struct(png);
@@ -94,7 +96,7 @@ namespace CNGE {
 		png_destroy_read_struct(&png, &info, nullptr);
 		fclose(file);
 
-		return Image(width, height, pixels);
+		return std::make_unique<Image>(width, height, pixels);
 	}
 
 	struct my_error_mgr {

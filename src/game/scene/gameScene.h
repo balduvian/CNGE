@@ -46,6 +46,8 @@ namespace Game {
 
 		i32 moveCounter;
 
+		i32 score;
+
 		std::unique_ptr<PieceReference> hold;
 		bool usedHold;
 

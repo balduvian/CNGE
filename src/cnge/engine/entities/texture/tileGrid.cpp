@@ -1,5 +1,4 @@
 
-#include <iostream>
 #include "tileGrid.h"
 
 namespace CNGE {
@@ -26,8 +25,6 @@ namespace CNGE {
 		tileValues[2] = x * f32(tileWidth + gap) / width;
 		tileValues[3] = y * f32(tileHeight + gap) / height;
 
-		//std::cout << tileValues[0] << " " << tileValues[1] << " " << tileValues[2] << " " << tileValues[3] << std::endl;
-
 		return tileValues;
 	}
 
@@ -42,4 +39,11 @@ namespace CNGE {
 		return tileValues;
 	}
 
+	u32 TileGrid::getTilesWide() {
+		return tilesWide;
+	}
+
+	u32 TileGrid::getTilesTall() {
+		return tilesTall;
+	}
 }

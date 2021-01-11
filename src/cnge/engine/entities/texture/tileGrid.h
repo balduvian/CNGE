@@ -20,6 +20,9 @@ namespace CNGE {
 
 		f32* getSheet(u32, u32);
 		f32* getSheet(u32);
+
+		u32 getTilesWide();
+		u32 getTilesTall();
 	};
 }
 

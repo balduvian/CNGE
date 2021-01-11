@@ -37,6 +37,8 @@ namespace CNLL {
 
             i32 total;
             i32 completed;
+
+            bool error;
     };
 }
 

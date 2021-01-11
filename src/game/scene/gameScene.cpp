@@ -4,6 +4,7 @@
 #include "cnge/math/math.h"
 #include "../gameResources.h"
 
+#include <string>
 #include <iostream>
 
 namespace Game {
@@ -83,6 +84,7 @@ namespace Game {
 		GameResources::testSound.play();
 
 		tickTimer.start();
+		score = 0;
 	}
 
 	auto GameScene::resized(u32 width, u32 height) -> void {
@@ -303,10 +305,29 @@ namespace Game {
 			}
 		}
 
+		/* render hold area to the left of the board */
 		auto holdX = boardX - 8 - upcomingSize;
 		auto holdY = boardY + boardHeight - upcomingSize;
 
 		renderBox(hold, holdX, holdY, upcomingSize, outlineSize);
+
+		/* render score to the left of the board underneath the hold */
+		auto characterHeight = 24;
+		auto scoreY = holdY - 8 - characterHeight;
+
+		GameResources::testFont.getTexture()->bind();
+
+		GameResources::testFont.render(holdX, scoreY, characterHeight, 0_f32, "Score:", [this](f32 x, f32 y, f32 width, f32 height, f32 *tile) {
+			GameResources::fontTextureShader.enable(CNGE::Transform::toModel(x, y, width, height), camera.getProjview());
+			GameResources::fontTextureShader.giveParams(1, 1, 1, 1, tile);
+			GameResources::rect.render();
+		});
+
+		GameResources::testFont.render(holdX, scoreY - 12, characterHeight, 0_f32, std::to_string(score).c_str(), [this](f32 x, f32 y, f32 width, f32 height, f32 *tile) {
+			GameResources::fontTextureShader.enable(CNGE::Transform::toModel(x, y, width, height), camera.getProjview());
+			GameResources::fontTextureShader.giveParams(1, 1, 1, 1, tile);
+			GameResources::rect.render();
+		});
 	}
 
 	auto GameScene::renderPiece(Piece *piece, TetrisBoard *board, f32 offsetX, f32 offsetY, f32 tileSize, f32 opacity) -> void {
@@ -351,9 +372,11 @@ namespace Game {
 
 		checkForRows(board.get(), destroyedRows);
 
+		/* there was not a line clear */
 		if (destroyedRows.empty()) {
 			newPiece(pieceList->dequeue(), false);
 
+		/* line clears happened */
 		} else {
 			rowAnimation = std::make_unique<CNGE::Timer>(0.5, true);
 
@@ -367,6 +390,9 @@ namespace Game {
 					if (tile) destroyParticles.emplace_back(i, row, tile);
 				}
 			}
+
+			/* add score based on line clears */
+			score += (100 + destroyedRows.size() * 50) * destroyedRows.size();
 		}
 
 		downLock = true;

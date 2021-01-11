@@ -12,7 +12,7 @@ file(GLOB_RECURSE SOURCES
 
 file(COPY ./res DESTINATION ./)
 
-add_executable(CNGE_8_2 ${SOURCE_FILES} ${SOURCES})
+add_executable(CNGE_8_2 ${SOURCE_FILES} ${SOURCES} src/cnge/engine/entities/font/font.h src/cnge/engine/entities/font/fontData.h src/cnge/engine/entities/font/fontData.cpp src/cnge/engine/entities/font/font.cpp)
 
 include_directories(C:/Users/Emmet/Programming/lib/libpng-1.6.0/include)
 include_directories(C:/Users/Emmet/Programming/lib/libjpeg)

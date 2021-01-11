@@ -20,8 +20,8 @@ namespace CNGE {
 	template<TextureType T, typename ...Parameters>
 	class ImageTexture : public CNLL::Resource {
 	public:
-		ImageTexture(const char* path, TextureParams textureParams, Parameters ...inputParameters)
-			: Resource(true), texture(nullptr), textureParams(textureParams), assetPath(path), assetImage(Image::makeEmpty()), parameters(std::make_tuple(inputParameters...)) {}
+		ImageTexture(const char* filepath, TextureParams textureParams, Parameters ...inputParameters)
+			: Resource(true), imageFilepath(filepath), image(), textureParams(textureParams), texture(nullptr), parameters(std::make_tuple(inputParameters...)) {}
 
 		~ImageTexture() {
 			onDestroy();
@@ -32,20 +32,18 @@ namespace CNGE {
 		}
 
 		auto customGather() -> bool override {
-			auto filename = std::filesystem::path(assetPath);
+			image = Image::fromPNG(imageFilepath.c_str());
 
-			assetImage = Image::fromPNG(filename);
-
-			return assetImage.isValid();
+			return image->isValid();
 		}
 
 		auto customDiscard() -> void override {
-			assetImage.invalidate();
+			image = nullptr;
 		}
 
 		auto customLoad() -> void override {
 			std::apply([this](Parameters ...parameters) {
-				texture = std::make_unique<T>(assetImage.getWidth(), assetImage.getHeight(), assetImage.getPixels(), textureParams, parameters...);
+				texture = std::make_unique<T>(image->getWidth(), image->getHeight(), image->getPixels(), textureParams, parameters...);
 			}, parameters);
 		}
 
@@ -54,12 +52,13 @@ namespace CNGE {
 		}
 
 	private:
-		std::unique_ptr<T> texture;
-		TextureParams textureParams;
-		std::tuple<Parameters...> parameters;
+		std::string imageFilepath;
+		std::unique_ptr<Image> image;
 
-		const char* assetPath;
-		Image assetImage;
+		TextureParams textureParams;
+		std::unique_ptr<T> texture;
+
+		std::tuple<Parameters...> parameters;
 	};
 }
 

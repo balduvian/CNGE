@@ -10,19 +10,19 @@
 namespace CNGE {
 	class Image {
 	private:
-		Image(u32, u32, u8*);
-
 		u32 width;
 		u32 height;
 		
 		u8* pixels;
 		
 	public:
-		static auto fromPNG(std::filesystem::path&) -> Image;
+		static auto fromPNG(const char *) -> std::unique_ptr<Image>;
 
 		static auto makeSheet(u32, u32) -> Image;
 		static auto makeEmpty() -> Image;
 
+		Image();
+		Image(u32, u32, u8*);
 		Image(Image&&);
 		auto operator=(Image&&) -> Image&;
 		~Image();
